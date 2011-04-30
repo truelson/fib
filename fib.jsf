@@ -11,8 +11,10 @@
 try { dojo.require; } catch (e)
     { fw.runScript(fw.currentScriptDir + "/lib/lib.js"); }
 
+try { _.times(function() {}) } catch (e)
+    { fw.runScript(fw.currentScriptDir + "/lib/underscore.js"); }
+
 dojo.require("dojo._base.json");
-dojo.require("dojo._base.array");
 
 var FIB = {};
 
@@ -158,7 +160,6 @@ var FIB = {};
     });
     
     new_dom.clipPaste('do not resample');
-    console.log('Testing')
 
     var obj = new_dom.layers[0].elems[0];
     bounds = getActualSize(obj);
@@ -555,7 +556,7 @@ var FIB = {};
     };
 
     // wrapper for the map call of extract object
-    dojo.map(container, extractObject);
+    _.map(container, extractObject);
     return pageObj;
   }
   // extractObjects added for testing purposes
