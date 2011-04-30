@@ -48,7 +48,7 @@ var FIB = {};
 
     // initialize pageObj if need be
     if(pageObj === undefined) {
-      pageObj = {};
+      pageObj = [];
     }
 
     // *TODO handle resorting of layers so objects show up properly
@@ -179,7 +179,7 @@ var FIB = {};
 
         delete newObj.image;
         FibHelper.exportPNG(obj, newObj.name);
-        pageObj[newObj.name] = newObj;
+        pageObj.push( newObj )
 
         // then export an image behind it
         // since adding backgroundImage to a text label causes pain
@@ -243,7 +243,7 @@ var FIB = {};
         extractType[newObj.metaData.type]();
       }
 
-      pageObj[newObj.name] = newObj;
+      pageObj.push( newObj )
 
       if (newObj.metaData.type != 'web' && 
           newObj.metaData.type != 'scroll') {
@@ -253,9 +253,6 @@ var FIB = {};
       return newObj;
     };
 
-    // means of getting meta data out of name
-    // *TODO create interface and store in symbol data.
-    // using a string for this is a HACK
     var extractMetaData = function (metaString) {
       var metaData = null;
       var name;
@@ -273,9 +270,6 @@ var FIB = {};
         return {name: metaString};
       }
       
-      // try to make string safe for json input
-      // THIS IS TOTALLY HACKY.  GET RID OF THIS
-      // replace white space, and add quotes around all objects
       metaString = metaString.replace(/\ /g, "");
       metaString = metaString.replace(/:/g, "\":\"");
       metaString = metaString.replace(/,/g, "\",\"");
@@ -368,7 +362,7 @@ var FIB = {};
         newObj.text = obj.textChars;
       }
 
-      pageObj[newObj.name] = newObj;
+      pageObj.push( newObj )
 
       return newObj;
     };
