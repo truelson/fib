@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cp ./fib.jsf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib.jsf
+cp -R ./lib ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
