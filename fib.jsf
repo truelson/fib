@@ -67,30 +67,17 @@ var FIB = {};
       newObj.height = "auto"; 
       newObj.width = "auto";
 
-      // get meta data out of name and GO!
-      // Small chance Titanium may someday use keyword metaData
-      newObj.metaData = extractMetaData(obj.name);
-
-      // set hidden attribute
-      if (newObj.metaData && !obj.visible) {
-        newObj.metaData.hidden = true;
-      }
+      metaData = extractMetaData(obj.name);
+      
+      _.extend(newObj, metaData)
 
       // now use meta data name if given.  Get unique if no name, or
       // empty, or doesn't exist
-      if(newObj.metaData.name && 
-         newObj.name != '' &&
-         FibHelper.isNameUnique(newObj.metaData.name)) {
-
-        newObj.name = newObj.metaData.name;
-        delete newObj.metaData.name;
-      } else {
-        newObj.name = FibHelper.getUniqueName(obj);
-      }
-      
-      // Set zIndex
-      if(newObj.metaData.zIndex) {
-        newObj.zIndex = newObj.metaData.zIndex;
+      if(!metaData.name ||
+         newObj.name == '' || 
+         !FibHelper.isNameUnique(newObj.name)) 
+      {
+        newObj.name = FibHelper.getUniqueName(obj)
       }
       
       // now add to name map
@@ -105,15 +92,15 @@ var FIB = {};
         return null;
       }
 
-      if (!newObj.metaData.type) {
-        newObj.metaData.type = 'image';
+      if (!newObj.type) {
+        newObj.type = 'image';
       }
       newObj.image = FibHelper.imagesDir + newObj.name + '.png';
       
       // extract inactive image
-      if (newObj.metaData.inactive) {
+      if (newObj.inactive) {
         newObj.backgroundDisabledImage = FibHelper.imagesDir + 
-          newObj.metaData.inactive + '.png';
+          newObj.inactive + '.png';
       }
 
       // handle case for different meta data
@@ -130,7 +117,6 @@ var FIB = {};
       extractType['web'] = function() {
         newObj.width = obj.width;
         newObj.height = obj.height;
-        newObj.url = newObj.metaData.url;
 
         delete newObj.image;
       };
@@ -161,19 +147,17 @@ var FIB = {};
         newObj.backgroundColor = 'transparent';
 
         
-        // Set color from metadata
-        if (newObj.metaData.color) {
-          newObj.color = newObj.metaData.color;
-        }
-  
         // Set font from metadata
-        if (newObj.metaData.font || newObj.metaData.fontsize) {
+        if (newObj.font || newObj.fontsize) {
+          var oldFont = newObj.font;
+          var oldFontSize = newObj.fontsize;
           newObj.font = {};
-          if(newObj.metaData.font) {
-            newObj.font.fontFamily = hackyFontRename(newObj.metaData.font);
+          if(oldFont) {
+            newObj.font.fontFamily = hackyFontRename(oldFont);
           }
-          if(newObj.metaData.fontsize) {
-            newObj.font.fontSize = newObj.metaData.fontsize;
+          if(oldFontSize) {
+            newObj.font.fontSize = oldFontSize;
+            delete newObj.fontsize;
           }
         }
 
@@ -184,11 +168,10 @@ var FIB = {};
         // then export an image behind it
         // since adding backgroundImage to a text label causes pain
         var newImgObj = extractBasics(obj);
-        newImgObj.metaData.type = 'image';
+        newImgObj.type = 'image';
         newImgObj.name = newObj.name + "_img";
         newImgObj.image = FibHelper.imagesDir + newImgObj.name + ".png";
         FibHelper.nameMap[newImgObj.name] = true;
-        delete newImgObj.metaData.name;
         newObj = newImgObj;
       };
       
@@ -208,45 +191,32 @@ var FIB = {};
 
       extractType['table'] = extractType['scrollable'];
 
-      extractType['free_image'] = function() {
-
-        // if it's an instance, then we want to add an offset
-        if (FibHelper.objType(obj) === 'Instance') {
-
-          // get the transform
-          var x = obj.transform.matrix[6];
-          var y = obj.transform.matrix[7];
-
-          // set how much to offset from the top, left
-          newObj.metaData.offset = {
-            x: newObj.left - x,
-            y: newObj.top - y
-          }
-        }
-      }
+      extractType['free_image'] = function() { }
       
       extractType['progress'] = function() {
         newObj.width = obj.width;
         newObj.height = obj.height;
-        newObj.bgcolor = '#FFFFFF'; // Arbitrarily defaulted to white
-        newObj.inverted = false;
-        if (newObj.metaData.bgcolor) {
-          newObj.bgcolor = newObj.metaData.bgcolor;
+        if(!newObj.bgcolor) {
+          newObj.bgcolor = '#FFFFFF'; // Arbitrarily defaulted to white
         }
-        if (newObj.metaData.inverted) {
-          newObj.inverted = newObj.metaData.inverted;
+        if(newObj.inverted === 'true') {
+          newObj.inverted = true;
+        } else {
+          newObj.inverted = false;
         }
       }
 
       // now run it
-      if (newObj.metaData.type in extractType) {
-        extractType[newObj.metaData.type]();
+      if (newObj.type in extractType) {
+        extractType[newObj.type]();
       }
 
-      pageObj.push( newObj )
+      if (newObj.type != 'free_image') {
+        pageObj.push( newObj )
+      }
 
-      if (newObj.metaData.type != 'web' && 
-          newObj.metaData.type != 'scroll') {
+      if (newObj.type != 'web' && 
+          newObj.type != 'scroll') {
         FibHelper.exportPNG(obj, newObj.name);
       }
 
@@ -352,13 +322,13 @@ var FIB = {};
       newObj.font.fontFamily = hackyFontRename(newObj.font.fontFamily);
       
       // handle textfield... all others are labels
-      if (newObj.metaData.type == 'textfield') {
+      if (newObj.type == 'textfield') {
 
         newObj.value = obj.textChars;
-      } else if (newObj.metaData.type == 'textarea') {
+      } else if (newObj.type == 'textarea') {
         newObj.value = obj.textChars;
       } else {
-        newObj.metaData.type = 'label';
+        newObj.type = 'label';
         newObj.text = obj.textChars;
       }
 

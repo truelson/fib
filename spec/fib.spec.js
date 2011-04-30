@@ -98,7 +98,7 @@ describe('FIB Tests!', function () {
           },
           height: 40,
           left: 10,
-          metaData: {type:'label'},
+          type:'label',
           name: 'MyLabel',
           text: 'Please Work',
           top: 0,
@@ -123,7 +123,7 @@ describe('FIB Tests!', function () {
         },
         height: 0,
         left: 0,
-        metaData: {type:'label'},
+        type:'label',
         name: 't1',
         text: '',
         textAlign: 'left', 
@@ -140,7 +140,7 @@ describe('FIB Tests!', function () {
         },
         height: 0,
         left: 0,
-        metaData: {type:'label'},
+        type:'label',
         name: 't2',
         text: '',
         textAlign: 'left', 
@@ -156,7 +156,7 @@ describe('FIB Tests!', function () {
         },
         height: 0,
         left: 0,
-        metaData: {type:'label'},
+        type:'label',
         name: 't3',
         text: '',
         textAlign: 'left', 
@@ -201,30 +201,25 @@ describe('FIB Tests!', function () {
     it('should create an image ImageView object', function () {
       var testImg = new Image({name: 'img'});
       var obj = FIB._extractObjects([testImg]);
-      expect(obj[0].metaData.type).toEqual('image');
+      expect(obj[0].type).toEqual('image');
     });
 
     it('should create an instance ImageView object', function () {
       var testInst = new Instance({name: 'inst'});
       var obj = FIB._extractObjects([testInst]);
-      expect(obj[0].metaData.type).toEqual('image');
+      expect(obj[0].type).toEqual('image');
     });
 
     it('should create a group ImageView object', function () {
       var test = new Group({name: 'grp'});
       obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.type).toEqual('image');
+      expect(obj[0].type).toEqual('image');
     });
 
     it('should create a RectanglePrimitive ImageView object', function () {
       var test = new RectanglePrimitive({name: 'rect'});
       obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.type).toEqual('image');
-    });
-    it('should create an invisi rectangle as hidden', function () {
-      var test = new RectanglePrimitive({name: 'rect', visible: false});
-      obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.hidden).toEqual(true);
+      expect(obj[0].type).toEqual('image');
     });
 
   });
@@ -242,7 +237,7 @@ describe('FIB Tests!', function () {
     it('should create a button object from a group', function () {
       var test = new Group({name: 'type:button'});
       obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.type).toEqual('button');
+      expect(obj[0].type).toEqual('button');
     });
 
     it('should create a button object image from a group', function () {
@@ -255,7 +250,7 @@ describe('FIB Tests!', function () {
     it('should not create a button object if misspelled', function () {
       var test = new Group({name: 'type:btton'});
       obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.type).toEqual('btton');
+      expect(obj[0].type).toEqual('btton');
     });
 
     it('should export a button with a disabled background', function() {
@@ -279,13 +274,13 @@ describe('FIB Tests!', function () {
     it('should create an image from a group with unknown type', function() {
       var test = new Group({name: 'name:hehe'});
       obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.type).toEqual('image');
+      expect(obj[0].type).toEqual('image');
     });
 
     it('should export a free image', function() {
       var test = new Instance({name: 'name:tehe, type:free_image'});
       obj = FIB._extractObjects([test]);
-      expect(obj[0].metaData.offset).toEqual({x: -10, y: -20});
+      expect(obj[0]).toEqual(undefined);
     });
 
     it('should create a textfield from text', function() {
@@ -300,9 +295,7 @@ describe('FIB Tests!', function () {
         color: '#ff0000',
         name: 'textytext',
         font: { fontFamily: 'Museo-Bold', fontSize: 24 },
-        metaData: {
-          type: 'textfield'
-        },
+        type: 'textfield',
         textAlign: 'left',
         value: ''
       });
@@ -320,9 +313,7 @@ describe('FIB Tests!', function () {
         color: '#ff0000',
         name: 'textytext',
         font: { fontFamily: 'GothamBold', fontSize: 24 },
-        metaData: {
-          type: 'textfield'
-        },
+        type: 'textfield',
         textAlign: 'left',
         value: ''
       });
@@ -338,9 +329,7 @@ describe('FIB Tests!', function () {
         width: -10,
         name: 'nummy',
         backgroundColor: 'transparent',
-        metaData: {
-          type: 'textfield'
-        }
+        type: 'textfield'
       });
     });
     
@@ -355,13 +344,8 @@ describe('FIB Tests!', function () {
         name: 'nummy',
         backgroundColor: 'transparent',
         font: {fontFamily:'Museo-Bold', fontSize: '27'},
-        color: '#666666',
-        metaData: {
-          type: 'textfield',
-          color: '#666666',
-          font: 'Museo-Bold',
-          fontsize: '27'
-        }
+        type: 'textfield',
+        color: '#666666'
       });
     });
 
@@ -377,12 +361,7 @@ describe('FIB Tests!', function () {
         backgroundColor: 'transparent',
         font: {fontFamily:'GothamBoldItalic', fontSize: '27'},
         color: '#666666',
-        metaData: {
-          type: 'textfield',
-          color: '#666666',
-          font: 'Gotham-Bold-Italic',
-          fontsize: '27'
-        }
+        type: 'textfield'
       });
     });
 
@@ -396,9 +375,7 @@ describe('FIB Tests!', function () {
         width: -10,
         name: 'nummy',
         backgroundColor: 'transparent',
-        metaData: {
-          type: 'textarea'
-        }
+        type: 'textarea'
       });
     });
     
@@ -410,12 +387,9 @@ describe('FIB Tests!', function () {
         top: 0,
         height: 0,
         width: 0,
-        value: false,
         name: 'nummy',
-        metaData: {
-          type: 'switch',
-          value: 'false'
-        }
+        type: 'switch',
+        value: false
       })
     })
 
@@ -430,10 +404,8 @@ describe('FIB Tests!', function () {
         width: -10,
         name: 'nummy',
         backgroundColor: 'transparent',
-        metaData: {
-          type: 'textfield',
-          keypad: 'num'
-        }
+        type: 'textfield',
+        keypad: 'num'
       });
     });
 
@@ -447,9 +419,7 @@ describe('FIB Tests!', function () {
         width: 'auto',
         image: 'images/TestView/nummy_img.png',
         name: 'nummy_img',
-        metaData: {
-          type: 'image'
-        }
+        type: 'image'
       });
     });
 
@@ -463,9 +433,7 @@ describe('FIB Tests!', function () {
         width: 'auto',
         image: 'images/TestView/nummy_img.png',
         name: 'nummy_img',
-        metaData: {
-          type: 'image'
-        }
+        type: 'image'
       });
     });
 
@@ -484,9 +452,7 @@ describe('FIB Tests!', function () {
         top: 0,
         width: -10,
         name: 'nummy',
-        metaData: {
-          type: 'textfield'
-        },
+        type: 'textfield',
         backgroundColor: 'transparent'
       });
     });
@@ -501,7 +467,7 @@ describe('FIB Tests!', function () {
       expect(obj[0]).toEqual({
           top: 0,
           left: 0,
-          metaData: {type: 'table'},
+          type: 'table',
           name: 'tab',
           contentWidth: 'auto',
           contentHeight: 'auto',
@@ -522,7 +488,7 @@ describe('FIB Tests!', function () {
       expect(obj[0]).toEqual({
           top: 0,
           left: 0,
-          metaData: {type: 'table'},
+          type: 'table',
           name: 'tab',
           contentWidth: 'auto',
           contentHeight: 'auto',
@@ -541,7 +507,7 @@ describe('FIB Tests!', function () {
       expect(obj[0]).toEqual({
           top: 0,
           left: 0,
-          metaData: {type: 'scrollable'},
+          type: 'scrollable',
           name: 'scr',
           contentWidth: 'auto',
           contentHeight: 'auto',
@@ -562,7 +528,7 @@ describe('FIB Tests!', function () {
       expect(obj[0]).toEqual({
           top: 0,
           left: 0,
-          metaData: {type: 'scrollable'},
+          type: 'scrollable',
           name: 'scr',
           contentWidth: 'auto',
           contentHeight: 'auto',
@@ -581,7 +547,7 @@ describe('FIB Tests!', function () {
       expect(obj[0]).toEqual({
           left: 0,
           top: 0,
-          metaData: {type: 'scroll'},
+          type: 'scroll',
           name: 'scroll_view',
           height: 100,
           width: 200
@@ -604,13 +570,9 @@ describe('FIB Tests!', function () {
         top: 20,
         width: 100,
         name: 'nummy',
-        metaData: {
-          type: 'progress',
-          bgcolor: '#333333',
-          inverted: 'true'
-        },
+        type: 'progress',
         bgcolor: '#333333',
-        inverted: 'true',
+        inverted: true,
         image: 'images/TestView/nummy.png'
       });
     });
@@ -625,11 +587,11 @@ describe('FIB Tests!', function () {
       expect(obj[0]).toEqual({
           left: 0,
           top: 0,
-          metaData: {type: 'web', url:'testurl.html'},
+          type: 'web', 
+          url:'testurl.html',
           name: 'webby',
           height: 100,
-          width: 200,
-          url:'testurl.html'
+          width: 200
       });
     });
   });
@@ -686,11 +648,11 @@ describe('FIB Tests!', function () {
               "top": 0,
               "height": 0,
               "width": 0,
-              "metaData":{"type":"label"},
               "name":"BigTest",
               "textAlign":"left",
               "color":"#ff0000",
               "font":{"fontFamily":"","fontSize":0},
+              "type":"label",
               "text":""
             }
           ], true, '  '));
