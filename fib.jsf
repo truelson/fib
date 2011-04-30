@@ -29,7 +29,6 @@ var FIB = {};
   // Setup.  Here comes the dom tree
   var dom = fw.getDocumentDOM();
   var sel = fw.selection;
-  var page_name = dom.pageName.replace(/ /,'_');
 
   // Support for our hacky font renaming to get around UIFont limitation on number
   // of weights/styles per font family to 2. Used ttx to rename fonts with their
@@ -455,7 +454,7 @@ var FIB = {};
 
     // Create file, then open.  Need to add test to check for file first
     // and delete if exists.
-    var filename = page_name + '.json';
+    var filename = FibHelper.getPageName() + '.json';
     
     Files.deleteFileIfExisting(FibHelper.fullStylesDir + filename);
     Files.createFile(FibHelper.fullStylesDir + filename, 'json', 'FWMX');
