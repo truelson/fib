@@ -5,6 +5,8 @@
  * About: Fireworks Mock Classes. Allows us to run unit tests on 
  *  fireworks files 
  */
+// add underscore
+_ = require('../lib/underscore.js');
 
 // it all starts with an object
 fw = {};
@@ -12,51 +14,6 @@ exports.fw = fw;
 
 fw._mockHelpers = {};
 fw.selection = [];
-
-fw._resetMockDom = function(d) {
-  d.pageName = 'TestView';
-  d.width = 320;
-  d.height = 480;
-  d.backgroundColor = '#ffffff';
-  d.exportOptions = {
-    colorMode: '32 bit'
-  }
-  d.resolution = 300;
-  d.resolutionUnits = 1;
-
-  return d;
-};
-
-fw.createDocument = function() {
-  return fw._resetMockDom({
-    // dom functions
-    exportElements: function (elems, file, imageDir, name) {},
-
-    cloneSelection: function() {},
-    flattenSelection: function() {},
-    getSelectionBounds: function() {return {};},
-
-    clipCut: function() {},
-    clipPaste: function() {},
-
-    close: function() {},
-    moveSelectionTo: function() {},
-
-    setDocumentResolution: function() {},
-    setDocumentCanvasSize: function() {}
-  });
-};
-
-fw._mockDOM = fw.createDocument();
-fw.getDocumentDOM = function () {return fw._mockDOM;};
-fw.exportDocumentAs = function () {};
-
-fw.runScript = function (scriptName) {};
-fw.currentScriptDir = './';
-
-fw.browseForFolderURL = function (name, hint) { return '~/TestDir'; };
-
-// Mocks of Fireworks class objects
 
 fw._mockHelpers.setBasics = function (obj) {
   obj.height = 0;
@@ -72,7 +29,7 @@ fw._mockHelpers.setBasics = function (obj) {
 var Group = function (spec) {
   fw._mockHelpers.setBasics(this);
   if(spec) {
-    dojo.mixin(this, spec);
+    _.extend(this, spec);
   }
 }
 Group.prototype.toString = function () {
@@ -84,7 +41,7 @@ exports.Group = Group;
 var Image = function (spec) {
   fw._mockHelpers.setBasics(this);
   if(spec) {
-    dojo.mixin(this, spec);
+    _.extend(this, spec);
   }
 }
 Image.prototype.toString = function () {
@@ -98,7 +55,7 @@ var Instance = function (spec) {
   this.transform = { matrix: [1, 0, 0, 0, 1, 0, 10, 20, 1] }; 
 
   if(spec) {
-    dojo.mixin(this, spec);
+    _.extend(this, spec);
   }
 }
 Instance.prototype.toString = function () {
@@ -109,7 +66,7 @@ exports.Instance = Instance;
 var RectanglePrimitive = function (spec) {
   fw._mockHelpers.setBasics(this);
   if(spec) {
-    dojo.mixin(this, spec);
+    _.extend(this, spec);
   }
 }
 RectanglePrimitive.prototype.toString = function () {
@@ -126,7 +83,7 @@ var Layer = function (spec) {
   this.visible = true;
 
   if(spec) {
-    dojo.mixin(this, spec);
+    _.extend(this, spec);
   }
 };
 Layer.prototype.toString = function () {
@@ -147,13 +104,70 @@ var Text = function (spec) {
   this.textChars = '';
 
   if(spec) {
-    dojo.mixin(this, spec);
+    _.extend(this, spec);
   }
 };
 Text.prototype.toString = function () {
   return '[object Text]';
 }
 exports.Text = Text;
+
+fw._resetMockDom = function(d) {
+  d.pageName = 'TestView';
+  d.width = 320;
+  d.height = 480;
+  d.backgroundColor = '#ffffff';
+  d.exportOptions = {
+    colorMode: '32 bit'
+  }
+  d.resolution = 300;
+  d.resolutionUnits = 1;
+
+  return d;
+};
+
+var mockLayer = {
+  elems: [ ]
+}
+
+var mockCopyObj;
+
+fw.createDocument = function() {
+  return fw._resetMockDom({
+    // dom functions
+    exportElements: function (elems, file, imageDir, name) {},
+
+    cloneSelection: function() {
+      mockCopyObj = fw.selection;
+    },
+    flattenSelection: function() {},
+    getSelectionBounds: function() {return {};},
+
+    clipCut: function() {},
+    clipPaste: function() {
+      mockLayer.elems.push(mockCopyObj);
+    },
+
+    close: function() {},
+    moveSelectionTo: function() {},
+
+    setDocumentResolution: function() {},
+    setDocumentCanvasSize: function() {},
+
+    layers: [mockLayer]
+  });
+};
+
+fw._mockDOM = fw.createDocument();
+fw.getDocumentDOM = function () {return fw._mockDOM;};
+fw.exportDocumentAs = function () {};
+
+fw.runScript = function (scriptName) {};
+fw.currentScriptDir = './';
+
+fw.browseForFolderURL = function (name, hint) { return '~/TestDir'; };
+
+// Mocks of Fireworks class objects
 
 // File accessing mocks
 fw._mockFile = {};
