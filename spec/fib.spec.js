@@ -6,10 +6,11 @@
  */
 describe('FIB Tests!', function () {
 
-  var FIB;
+  var FIB, FibHelper;
 
   beforeEach(function() {
-    FIB = require('../fib.jsf').FIB;
+    FIB = require('../fib.jsf').FIB
+    FibHelper = require('../fib_helper.js').FibHelper
     fw._resetMockDom(fw._mockDOM);
     fw.selection = [];
   });
@@ -20,111 +21,6 @@ describe('FIB Tests!', function () {
     });
   }); 
 
-  describe('Helper Function tests', function () {
-
-    it('should have a working object type function', function () {
-      expect(FIB._objType([])).toEqual('Array');
-    });
-
-    describe('ExportPNG function', function () {
-      var img;
-
-      beforeEach(function() {
-        img = new Image({ 
-          name: 'TestImage', 
-          left: 0,
-          top: 0,
-          width: 20, 
-          height: 30, 
-          pixelRect: {top:5, bottom:25, left: 5, right: 15}
-        });
-      });
-
-      it('should maintain selection', function () {
-        fw.selection = 'test';
-        FIB._exportPNG(img, 'TestPlace');
-        expect(fw.selection).toEqual('test');
-      });
-
-      it('should set exportOptions.exportFormat to PNG', function() {
-        FIB._exportPNG(img, 'TestPlace');
-        expect(fw._mockDOM.exportOptions.exportFormat).toEqual('PNG');
-      });
-
-      it('should set canvas size to full bounds', function() {
-        spyOn(FIB, 'getActualSize').andReturn({
-          left: 0, top:0, right: 20, bottom: 30
-        });
-        spyOn(fw._mockDOM, 'setDocumentCanvasSize');
-        FIB._exportPNG(img, 'TestImage');
-        expect(fw._mockDOM.setDocumentCanvasSize).toHaveBeenCalledWith({
-          left: 0, top:0, right: 20, bottom: 30, width: 20, height: 30
-        }, true);
-      });
-    });
-
-    describe('Get Actual Size from Object tests', function() {
-      var test_obj, test_rect_small, test_rect_big;
-
-      beforeEach(function() {
-        test_obj = {
-          left: 5,
-          top: 10,
-          width: 20,
-          height: 30
-        };
-
-        test_rect_small = {
-          left: 6,
-          top: 11,
-          right: 24,
-          bottom: 36
-        };
-
-        test_rect_big = {
-          left: 4,
-          top: 9,
-          right: 26,
-          bottom: 41
-        };
-
-        this.addMatchers({
-          toBeSameSizeAs: function(sizeObj) {
-            if (sizeObj.width !== this.actual.width ||
-                sizeObj.height !== this.actual.height ||
-                sizeObj.left !== this.actual.left ||
-                sizeObj.top !== this.actual.top) {
-              return false;
-            }
-
-            return true;
-          }
-        }); 
-      });
-
-      it('should extract same size if no pixelRect', function() {
-        expect(FIB.getActualSize(test_obj)).toBeSameSizeAs(test_obj);
-      });
-
-      it('should extract same size if small pixel rect', function() {
-        test_obj.pixelRect = test_rect_small;
-        expect(FIB.getActualSize(test_obj)).toBeSameSizeAs(test_obj);
-      });
-
-      it('should extract pixel rect size if big pixel rect', function() {
-        test_obj.pixelRect = test_rect_big;
-        expect(FIB.getActualSize(test_obj)).toBeSameSizeAs({
-          left: 4,
-          top: 9,
-          width: 22,
-          height: 32
-        });
-      });
-
-
-    });
-  });
-
   describe('Name Creation tests', function () {
 
     var mockImage, mockImage2;
@@ -132,7 +28,7 @@ describe('FIB Tests!', function () {
     beforeEach(function () {
       mockImage = new Image();
       mockImage2 = new Image();
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
     afterEach(function () {
     });
@@ -143,7 +39,7 @@ describe('FIB Tests!', function () {
     });
 
     it('should create a unique name if used name exists', function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
       mockImage.name = 'holymackerel';
       mockImage2.name = 'holymackerel';
       expect(FIB._extractObjects(
@@ -188,7 +84,7 @@ describe('FIB Tests!', function () {
     });
 
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
 
     it('should parse a text object as a label', function () {
@@ -271,7 +167,7 @@ describe('FIB Tests!', function () {
     });
 
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
 
     it('should have label t1', function () {
@@ -287,7 +183,7 @@ describe('FIB Tests!', function () {
 
   describe('Test text with null name', function () {
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
 
     it('should use text for name if name is null', function () {
@@ -299,7 +195,7 @@ describe('FIB Tests!', function () {
 
   describe('Image tests', function () {
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
 
     it('should create an image ImageView object', function () {
@@ -337,11 +233,11 @@ describe('FIB Tests!', function () {
   describe('Test exporting button parameters', function () {
 
     beforeEach(function () {
-     FIB._getResourceDirs(); 
+     FibHelper.getResourceDirs(); 
     });
 
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
 
     it('should create a button object from a group', function () {
@@ -350,7 +246,7 @@ describe('FIB Tests!', function () {
       expect(obj['__TestViewGroup1'].metaData.type).toEqual('button');
     });
 
-    it('should create a button object from a group', function () {
+    it('should create a button object image from a group', function () {
       var test = new Group({name: 'name:heya,type:button'});
       obj = FIB._extractObjects([test]);
       expect(obj['heya'].backgroundImage).toEqual(
@@ -374,11 +270,11 @@ describe('FIB Tests!', function () {
   describe('Test exporting different type objects', function () {
 
     beforeEach(function () {
-      FIB._getResourceDirs(); 
+      FibHelper.getResourceDirs(); 
     });
 
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
     });
 
     it('should create an image from a group with unknown type', function() {
@@ -763,12 +659,12 @@ describe('FIB Tests!', function () {
 
   describe('Test the view props function', function () {
     beforeEach(function () {
-      FIB._getResourceDirs(); 
+      FibHelper.getResourceDirs(); 
       fw._mockDOM.height = 480;
       fw._mockDOM.width = 320;
     });
     afterEach(function () {
-      FIB._resetCounter();
+      FibHelper.resetCounter();
       fw._mockDOM.backgroundColor = '#ffffff';
       fw._mockDOM.height = 480;
       fw._mockDOM.width = 320;
@@ -874,7 +770,7 @@ describe('FIB Tests!', function () {
       });
 
       afterEach(function () {
-        FIB._resetCounter();
+        FibHelper.resetCounter();
       });
       
       it('should not export scroll_view', function() {
@@ -895,7 +791,7 @@ describe('FIB Tests!', function () {
       });
 
       afterEach(function () {
-        FIB._resetCounter();
+        FibHelper.resetCounter();
       });
 
       it('should export a label and write the json to file', function () {

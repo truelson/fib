@@ -1,10 +1,14 @@
 #!/bin/sh
 
 FIB_PATH=`pwd`/fib.jsf
+FIB_HELP_PATH=`pwd`/fib_helper.js
 LIB_PATH=`pwd`/lib
 
 rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib.jsf
 ln -s $FIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
+
+rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib_helper.js
+ln -s $FIB_HELP_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
 
 rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/lib
 ln -s $LIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/

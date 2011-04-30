@@ -14,6 +14,8 @@ try { dojo.require; } catch (e)
 try { _.times(function() {}) } catch (e)
     { fw.runScript(fw.currentScriptDir + "/lib/underscore.js"); }
 
+fw.runScript(fw.currentScriptDir + '/fib_helper.js')
+
 dojo.require("dojo._base.json");
 
 var FIB = {};
@@ -29,9 +31,6 @@ var FIB = {};
   var sel = fw.selection;
   var page_name = dom.pageName.replace(/ /,'_');
 
-  // list of resource directories we're going to get
-  var resourcesDir, imagesDir, fullImagesDir, stylesDir, fullStylesDir;
-
   // Support for our hacky font renaming to get around UIFont limitation on number
   // of weights/styles per font family to 2. Used ttx to rename fonts with their
   // weights - i.e. Gotham-Bold-Italic -> GothamBoldItalic
@@ -44,174 +43,6 @@ var FIB = {};
     }
     return font;
   }
-
-  var getResourceDirs = function () {
-    // *TODO Add code using filePathForSave to save a meta file object
-    // that will have a stored preferences file in JSON with our 
-    // preferred resource dir and other options
-
-    // get a resources dir
-    resourcesDir = fw.browseForFolderURL('Choose the App Resource Dir');
-    if (resourcesDir === null) {
-      return false;
-    };
-    resourcesDir = resourcesDir + '/';
-
-    // set our module convenience variables
-    imagesDir = 'images/' + page_name + '/';
-    fullImagesDir = resourcesDir + imagesDir;
-    stylesDir = 'styles/';
-    fullStylesDir = resourcesDir + stylesDir;
-    return true;
-  }
-  FIB._getResourceDirs = getResourceDirs;
-
-  // Helpers:
-
-  // Gets type of object from toString returned
-  var objType = function(obj) {
-    if (typeof obj !== 'object') {
-      return null;
-    }
-
-    // *HACK here.  Use to string first to see if it returns
-    // [object <type>]
-    // if not, use the old type.
-    // this allows us to override type in our mocks
-    var name = obj.toString();
-    if (!name.match(/^\[object /)) { 
-      // Use the object prototype toString.  This always works.
-      name = Object.prototype.toString.call(obj);
-    }
-    name = name.replace(/\[object /, '');
-    name = name.replace(/\]/, '');
-    
-    return name;
-  };
-  FIB._objType = objType;
-  
-  // Get unique name for objects without names
-  // adding external access to function for testing purposes
-  var nameMap = {};
-  var counter = {};
-  var resetCounter = function () {
-    counter['Text'] = 0;
-    counter['Button'] = 0;
-    counter['Group'] = 0;
-    counter['Image'] = 0;
-    counter['Instance'] = 0;
-    counter['Path'] = 0;
-    counter['RectanglePrimitive'] = 0;
-    counter['Undefined'] = 0;
-    nameMap = {};
-  };
-  FIB._resetCounter = resetCounter;
-  resetCounter();
-  
-  var getUniqueName = function (obj) {
-    var type = objType(obj);
-    var name;
-    if(type in counter) {
-      counter[type]++;
-      name = '__' + page_name + type + counter[type];  
-    } else {
-      counter['Undefined']++;
-      name = '__' + page_name + 'Undefined' + counter['Undefined'];
-    }
-    return name;  
-  };
-
-  var isNameUnique = function (curName)
-  {
-    return (!(nameMap.hasOwnProperty(curName)));
-  };
-
-  var cloneAndCut = function cloneAndCut(obj) {
-    var bounds;
-    
-    var old_selection = fw.selection;
-    fw.selection = obj;
-
-    dom.cloneSelection();
-    bounds = getActualSize(obj);
-    dom.clipCut();
-
-    fw.selection = old_selection;
-    
-    return bounds;
-  };
-  FIB._cloneAndCut = cloneAndCut;
-
-  var createAndPaste = function createAndPaste(bounds) {
-    var old_dom, new_dom;
-
-    old_dom = fw.getDocumentDOM();
-
-    fw.createDocument();
-    new_dom = fw.getDocumentDOM();
-
-    // set the export options
-    new_dom.backgroundColor = '#ffffff00';
-    new_dom.exportOptions.colorMode = '32 bit';
-    new_dom.exportOptions.exportFormat = 'PNG';
-    new_dom.setDocumentResolution({
-      pixelsPerUnit: old_dom.resolution,
-      units: old_dom.resolutionUnits
-    });
-    
-    new_dom.clipPaste('do not resample');
-
-    var obj = new_dom.layers[0].elems[0];
-    bounds = getActualSize(obj);
-
-    // set the canvas size to the selection size and paste
-    new_dom.setDocumentCanvasSize(bounds, true);
-
-    return new_dom;
-  };
-  FIB._createAndPaste = createAndPaste;
-
-  // exporting files via dom export elements
-  var exportPNG = function (obj, name) {
-    if(!obj) {
-      return; 
-    }
-
-    // now run exportElements
-    //dom.exportElements(objs, fullImagesDir, name + '.png', name);
-
-    var bounds = cloneAndCut(obj);
-    var new_dom = createAndPaste(bounds);
-
-    fw.exportDocumentAs(new_dom, fullImagesDir + name + '.png', null);
-
-    new_dom.close(false);
-    
-  }
-  FIB._exportPNG = exportPNG;
-
-  var getActualSize = function getActualSize(obj) {
-    var size = {};
-
-    size.top = obj.top;
-    size.left = obj.left;
-    size.width = obj.width;
-    size.height = obj.height;
-    size.right = obj.left + obj.width;
-    size.bottom = obj.top + obj.height;
-
-    if (obj.pixelRect) {
-      size.top = Math.min(size.top, obj.pixelRect.top);
-      size.bottom = Math.max(size.bottom, obj.pixelRect.bottom);
-      size.left = Math.min(size.left, obj.pixelRect.left);
-      size.right = Math.max(size.right, obj.pixelRect.right);
-      size.height = size.bottom - size.top;
-      size.width = size.right - size.left;
-    }
-
-    return size;
-  };
-  FIB.getActualSize = getActualSize;
 
   // our recursive means of extracting objects
   var extractObjects = function (container, pageObj) {
@@ -227,7 +58,7 @@ var FIB = {};
     var extractBasics = function (obj) {
 
       var newObj = {};
-      var new_size = getActualSize(obj);
+      var new_size = FibHelper.getActualSize(obj);
 
       newObj.left = new_size.left;
       newObj.top = new_size.top;
@@ -253,12 +84,12 @@ var FIB = {};
       // empty, or doesn't exist
       if(newObj.metaData.name && 
          newObj.name != '' &&
-         isNameUnique(newObj.metaData.name)) {
+         FibHelper.isNameUnique(newObj.metaData.name)) {
 
         newObj.name = newObj.metaData.name;
         delete newObj.metaData.name;
       } else {
-        newObj.name = getUniqueName(obj);
+        newObj.name = FibHelper.getUniqueName(obj);
       }
       
       // Set zIndex
@@ -267,7 +98,7 @@ var FIB = {};
       }
       
       // now add to name map
-      nameMap[newObj.name] = true;
+      FibHelper.nameMap[newObj.name] = true;
 
       return newObj;
     };
@@ -281,11 +112,11 @@ var FIB = {};
       if (!newObj.metaData.type) {
         newObj.metaData.type = 'image';
       }
-      newObj.image = imagesDir + newObj.name + '.png';
+      newObj.image = FibHelper.imagesDir + newObj.name + '.png';
       
       // extract inactive image
       if (newObj.metaData.inactive) {
-        newObj.backgroundDisabledImage = imagesDir + 
+        newObj.backgroundDisabledImage = FibHelper.imagesDir + 
           newObj.metaData.inactive + '.png';
       }
 
@@ -351,7 +182,7 @@ var FIB = {};
         }
 
         delete newObj.image;
-        exportPNG(obj, newObj.name);
+        FibHelper.exportPNG(obj, newObj.name);
         pageObj[newObj.name] = newObj;
 
         // then export an image behind it
@@ -359,8 +190,8 @@ var FIB = {};
         var newImgObj = extractBasics(obj);
         newImgObj.metaData.type = 'image';
         newImgObj.name = newObj.name + "_img";
-        newImgObj.image = imagesDir + newImgObj.name + ".png";
-        nameMap[newImgObj.name] = true;
+        newImgObj.image = FibHelper.imagesDir + newImgObj.name + ".png";
+        FibHelper.nameMap[newImgObj.name] = true;
         delete newImgObj.metaData.name;
         newObj = newImgObj;
       };
@@ -384,7 +215,7 @@ var FIB = {};
       extractType['free_image'] = function() {
 
         // if it's an instance, then we want to add an offset
-        if (objType(obj) === 'Instance') {
+        if (FibHelper.objType(obj) === 'Instance') {
 
           // get the transform
           var x = obj.transform.matrix[6];
@@ -420,7 +251,7 @@ var FIB = {};
 
       if (newObj.metaData.type != 'web' && 
           newObj.metaData.type != 'scroll') {
-        exportPNG(obj, newObj.name);
+        FibHelper.exportPNG(obj, newObj.name);
       }
 
       return newObj;
@@ -548,11 +379,11 @@ var FIB = {};
 
     // extract switch helper
     var extractObject = function (obj) {
-      var type = objType(obj);
+      var type = FibHelper.objType(obj);
       if (!(type in extractSwitch)) {
         return null;
       }
-      return extractSwitch[objType(obj)](obj);
+      return extractSwitch[FibHelper.objType(obj)](obj);
     };
 
     // wrapper for the map call of extract object
@@ -605,13 +436,13 @@ var FIB = {};
   // The actual function you call to export a page
   FIB.exportInterface = function () {
     // get root resource directory
-    if(!dom || !getResourceDirs()) {
+    if(!dom || !FibHelper.getResourceDirs()) {
       return false;
     }
     
     // delete the image directory first
-    Files.deleteFileIfExisting(fullImagesDir); 
-    Files.createDirectory(fullImagesDir);
+    Files.deleteFileIfExisting(FibHelper.fullImagesDir); 
+    Files.createDirectory(FibHelper.fullImagesDir);
 
     var objTree = extractObjects(dom.topLayers || dom.layers);
 
@@ -626,9 +457,9 @@ var FIB = {};
     // and delete if exists.
     var filename = page_name + '.json';
     
-    Files.deleteFileIfExisting(fullStylesDir + filename);
-    Files.createFile(fullStylesDir + filename, 'json', 'FWMX');
-    var file = Files.open(fullStylesDir + filename, true);
+    Files.deleteFileIfExisting(FibHelper.fullStylesDir + filename);
+    Files.createFile(FibHelper.fullStylesDir + filename, 'json', 'FWMX');
+    var file = Files.open(FibHelper.fullStylesDir + filename, true);
 
     // Make sure you write text in UTF8!
     file.writeUTF8(dojo.toJson(objTree, true, '  '));
@@ -645,12 +476,6 @@ try {
   // don't run this if you're testing it
   if(!fw._mockFile) {
     var ret = FIB.exportInterface();
-    /*
-    var bounds = FIB._cloneAndCut(fw.selection[0]);
-    console.log(bounds);
-    FIB._createAndPaste(bounds);
-    fw.selection[0]
-    */
   }
 } catch(e) {
   alert([e.lineNumber, e.message]);
