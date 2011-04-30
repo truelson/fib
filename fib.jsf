@@ -75,9 +75,6 @@ var FIB = {};
       if (newObj.metaData && !obj.visible) {
         newObj.metaData.hidden = true;
       }
-      if(newObj.metaData.name == 'bg_input') {
-        console.log(new_size);
-      }
 
       // now use meta data name if given.  Get unique if no name, or
       // empty, or doesn't exist
