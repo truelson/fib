@@ -657,102 +657,6 @@ describe('FIB Tests!', function () {
     });
   });
 
-  describe('Test the view props function', function () {
-    beforeEach(function () {
-      FibHelper.getResourceDirs(); 
-      fw._mockDOM.height = 480;
-      fw._mockDOM.width = 320;
-    });
-    afterEach(function () {
-      FibHelper.resetCounter();
-      fw._mockDOM.backgroundColor = '#ffffff';
-      fw._mockDOM.height = 480;
-      fw._mockDOM.width = 320;
-    });
-    it('should export some basic view props', function () {
-      expect(FIB._extractViewProps()).toEqual({
-          metaData: {
-            type: 'view',
-            orientation: 'PORTRAIT'
-          },
-          backgroundColor: '#ffffff',
-          height: 480,
-          width: 320
-      });
-    });
-
-    it('should export changed background color', function () {
-      fw._mockDOM.backgroundColor = '#fafafa';
-      expect(FIB._extractViewProps()).toEqual({
-        metaData: {
-          type: 'view',
-          orientation: 'PORTRAIT'
-        },
-        backgroundColor:'#fafafa',
-        height: 480,
-        width: 320
-      });
-    });
-
-    it('should export as a table row', function () {
-      fw._mockDOM.pageName = 'BlahTestTableRow';
-      expect(FIB._extractViewProps()).toEqual({
-        metaData: {
-          type: 'tableRow',
-          orientation: 'PORTRAIT'
-        },
-        backgroundColor:'#ffffff',
-        height: 480,
-        width: 320
-      });
-    });
-
-    it('should export a scroll view with specific view size', function() {
-      fw._mockDOM.height = 500;
-      fw._mockDOM.width = 320;
-      expect(FIB._extractViewProps(
-        {'scroll_view': {
-          'width': 300,
-          'height': 220 
-        }}
-      )).toEqual({
-        metaData: {
-          type: 'scroll',
-          orientation: 'PORTRAIT'
-        },
-        backgroundColor:'#ffffff',
-        height: 220,
-        width: 300,
-        contentHeight: 500,
-        contentWidth: 320 
-      });
-      
-    });
-
-    it('should export scroll view that only scrolls horizontally',
-      function() {
-        fw._mockDOM.width = 400;
-        fw._mockDOM.height = 480;
-        expect(FIB._extractViewProps(
-          {'scroll_view': {
-            'width': 320,
-            'height': 480 
-          }}
-        )).toEqual({
-          metaData: {
-            orientation: 'PORTRAIT',
-            type: 'scroll'
-          },
-          contentWidth: 400,
-          contentHeight: 480,
-          backgroundColor: '#ffffff',
-          width: 320,
-          height: 480
-        });
-      }
-    );
-  });
-
   describe('Test the full export function', function () {
     
     var files;
@@ -810,15 +714,6 @@ describe('FIB Tests!', function () {
               "color":"#ff0000",
               "font":{"fontFamily":"","fontSize":0},
               "text":""
-            },
-            '_props': {
-              metaData: {
-                type: 'view',
-                orientation: 'PORTRAIT'
-              },
-              backgroundColor: '#ffffff',
-              height: 480,
-              width: 320
             }
           }, true, '  '));
       });

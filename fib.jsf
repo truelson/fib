@@ -389,46 +389,6 @@ var FIB = {};
   // extractObjects added for testing purposes
   FIB._extractObjects = extractObjects;
 
-  // What type of view are we dealing with here?
-  var extractViewProps = function extractViewProps(obj_tree) {
-    var props = {};
-
-    props.metaData = {};
-    props.metaData.type = 'view';
-
-    props.backgroundColor = dom.backgroundColor;
-
-    props.metaData.orientation = 'PORTRAIT'; 
-
-    props.height = dom.height;
-    props.width = dom.width;
-
-    var v_max = VERT_SCROLL_THRESHOLD;
-    var h_max = HORIZ_SCROLL_THRESHOLD;
-    
-    // *TODO make this based on meta data in png file, not a name
-    if (dom.pageName.match(/TableRow$/)) {
-      props.metaData.type = 'tableRow';
-    }
-
-    if (dom.width > dom.height && dom.width > h_max) {
-      props.metaData.orientation = 'LANDSCAPE'; 
-    }
-
-    // add scroll view
-    if (obj_tree && obj_tree.scroll_view) {
-      props.metaData.type = 'scroll';
-      props.contentHeight = dom.height;
-      props.contentWidth = dom.width;
-      props.height = obj_tree.scroll_view.height;
-      props.width = obj_tree.scroll_view.width;
-    }
-
-
-    return props;
-  };
-  FIB._extractViewProps = extractViewProps;
-
   // The actual function you call to export a page
   FIB.exportInterface = function () {
     // get root resource directory
@@ -442,8 +402,6 @@ var FIB = {};
 
     var objTree = extractObjects(dom.topLayers || dom.layers);
 
-    objTree._props = extractViewProps(objTree);
-    
     // delete scroll_view if it exists
     if (objTree.scroll_view) {
       delete objTree.scroll_view;
