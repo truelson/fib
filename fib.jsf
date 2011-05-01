@@ -73,15 +73,15 @@ var FIB = {};
 
       // now use meta data name if given.  Get unique if no name, or
       // empty, or doesn't exist
-      if(!metaData.name ||
-         newObj.name == '' || 
-         !FibHelper.isNameUnique(newObj.name)) 
+      if(!metaData.id ||
+         newObj.id == '' ||
+         !FibHelper.isNameUnique(newObj.id))
       {
-        newObj.name = FibHelper.getUniqueName(obj)
+        newObj.id = FibHelper.getUniqueName(obj)
       }
       
       // now add to name map
-      FibHelper.nameMap[newObj.name] = true;
+      FibHelper.nameMap[newObj.id] = true;
 
       return newObj;
     };
@@ -95,7 +95,7 @@ var FIB = {};
       if (!newObj.type) {
         newObj.type = 'image';
       }
-      newObj.image = FibHelper.imagesDir + newObj.name + '.png';
+      newObj.image = FibHelper.imagesDir + newObj.id + '.png';
       
       // extract inactive image
       if (newObj.inactive) {
@@ -107,7 +107,7 @@ var FIB = {};
       var extractType = {};
 
       extractType['scroll'] = function() {
-        newObj.name = 'scroll_view';
+        newObj.id = 'scroll_view';
         newObj.width = obj.width;
         newObj.height = obj.height;
 
@@ -161,17 +161,17 @@ var FIB = {};
           }
         }
 
-        delete newObj.image;
-        FibHelper.exportPNG(obj, newObj.name);
+        delete newObj.image
+        FibHelper.exportPNG( obj, newObj.id )
         pageObj.push( newObj )
 
         // then export an image behind it
         // since adding backgroundImage to a text label causes pain
         var newImgObj = extractBasics(obj);
         newImgObj.type = 'image';
-        newImgObj.name = newObj.name + "_img";
-        newImgObj.image = FibHelper.imagesDir + newImgObj.name + ".png";
-        FibHelper.nameMap[newImgObj.name] = true;
+        newImgObj.id = newObj.id + "_img";
+        newImgObj.image = FibHelper.imagesDir + newImgObj.id + ".png";
+        FibHelper.nameMap[newImgObj.id] = true;
         newObj = newImgObj;
       };
       
@@ -217,7 +217,7 @@ var FIB = {};
 
       if (newObj.type != 'web' && 
           newObj.type != 'scroll') {
-        FibHelper.exportPNG(obj, newObj.name);
+        FibHelper.exportPNG(obj, newObj.id);
       }
 
       return newObj;
@@ -237,7 +237,7 @@ var FIB = {};
 
       if(!(metaString.match(/:/))) {
         metaString = metaString.replace(/\ /g, "_");
-        return {name: metaString};
+        return {id: metaString};
       }
       
       metaString = metaString.replace(/\ /g, "");

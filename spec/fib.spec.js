@@ -38,29 +38,29 @@ describe('FIB Tests!', function () {
         not.toEqual(undefined);
     });
 
-    it('should create a unique name if used name exists', function () {
+    it('should create a unique id if used id exists', function () {
       FibHelper.resetCounter();
       mockImage.name = 'holymackerel';
       mockImage2.name = 'holymackerel';
       expect(FIB._extractObjects(
-        [mockImage, mockImage2])[1].name).not.toEqual('holymackerel');
+        [mockImage, mockImage2])[1].id).not.toEqual('holymackerel');
     });
 
     it('should use name if exists without metaData', function () {
       mockImage.name = 'fdsa';
-      expect(FIB._extractObjects([mockImage])[0].name)
+      expect(FIB._extractObjects([mockImage])[0].id)
         .toEqual('fdsa');
     });
 
-    it('should use meta data name if there', function () {
-      mockImage.name = 'type:image, name:asdf';
-      expect(FIB._extractObjects([mockImage])[0].name)
+    it('should use meta data id if there', function () {
+      mockImage.name = 'type:image, id:asdf';
+      expect(FIB._extractObjects([mockImage])[0].id)
         .toEqual('asdf');
     });
 
     it('should replace spaces with underscores', function () {
       mockImage.name = 'Control Town';
-      expect(FIB._extractObjects([mockImage])[0].name)
+      expect(FIB._extractObjects([mockImage])[0].id)
         .toEqual('Control_Town');
     });
 
@@ -99,7 +99,7 @@ describe('FIB Tests!', function () {
           height: 40,
           left: 10,
           type:'label',
-          name: 'MyLabel',
+          id: 'MyLabel',
           text: 'Please Work',
           top: 0,
           width: 200
@@ -124,7 +124,7 @@ describe('FIB Tests!', function () {
         height: 0,
         left: 0,
         type:'label',
-        name: 't1',
+        id: 't1',
         text: '',
         textAlign: 'left', 
         top: 0,
@@ -141,7 +141,7 @@ describe('FIB Tests!', function () {
         height: 0,
         left: 0,
         type:'label',
-        name: 't2',
+        id: 't2',
         text: '',
         textAlign: 'left', 
         top: 0,
@@ -157,7 +157,7 @@ describe('FIB Tests!', function () {
         height: 0,
         left: 0,
         type:'label',
-        name: 't3',
+        id: 't3',
         text: '',
         textAlign: 'left', 
         top: 0,
@@ -189,7 +189,7 @@ describe('FIB Tests!', function () {
     it('should use text for name if name is null', function () {
       var testText = new Text({name: null, textChars: 'Text Name'});
       var obj = FIB._extractObjects([testText]);
-      expect(obj[0].name).toEqual('__TestViewText1');
+      expect(obj[0].id).toEqual('__TestViewText1');
     });
   });
 
@@ -241,7 +241,7 @@ describe('FIB Tests!', function () {
     });
 
     it('should create a button object image from a group', function () {
-      var test = new Group({name: 'name:heya,type:button'});
+      var test = new Group({name: 'id:heya,type:button'});
       obj = FIB._extractObjects([test]);
       expect(obj[0].backgroundImage).toEqual(
         'images/TestView/heya.png');
@@ -254,7 +254,7 @@ describe('FIB Tests!', function () {
     });
 
     it('should export a button with a disabled background', function() {
-      var test = new Group({name: 'name:heya,type:button, inactive:test'});
+      var test = new Group({name: 'id:heya,type:button, inactive:test'});
       obj = FIB._extractObjects([test]);
       expect(obj[0].backgroundDisabledImage).toEqual(
         'images/TestView/test.png');
@@ -272,19 +272,19 @@ describe('FIB Tests!', function () {
     });
 
     it('should create an image from a group with unknown type', function() {
-      var test = new Group({name: 'name:hehe'});
+      var test = new Group({name: 'id:hehe'});
       obj = FIB._extractObjects([test]);
       expect(obj[0].type).toEqual('image');
     });
 
     it('should export a free image', function() {
-      var test = new Instance({name: 'name:tehe, type:free_image'});
+      var test = new Instance({name: 'id:tehe, type:free_image'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual(undefined);
     });
 
     it('should create a textfield from text', function() {
-      var test = new Text({name: 'name:textytext, type:textfield',
+      var test = new Text({name: 'id:textytext, type:textfield',
         font: 'Museo-Bold', fontsize: 24});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
@@ -293,7 +293,7 @@ describe('FIB Tests!', function () {
         top: 0,
         width: 0,
         color: '#ff0000',
-        name: 'textytext',
+        id: 'textytext',
         font: { fontFamily: 'Museo-Bold', fontSize: 24 },
         type: 'textfield',
         textAlign: 'left',
@@ -302,7 +302,7 @@ describe('FIB Tests!', function () {
     });
 
     it('should create a textfield from text with hacked fonts', function() {
-      var test = new Text({name: 'name:textytext, type:textfield',
+      var test = new Text({name: 'id:textytext, type:textfield',
         font: 'Gotham-Bold', fontsize: 24});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
@@ -311,7 +311,7 @@ describe('FIB Tests!', function () {
         top: 0,
         width: 0,
         color: '#ff0000',
-        name: 'textytext',
+        id: 'textytext',
         font: { fontFamily: 'GothamBold', fontSize: 24 },
         type: 'textfield',
         textAlign: 'left',
@@ -320,28 +320,28 @@ describe('FIB Tests!', function () {
     });
 
     it('should create a textfield from a group', function() {
-      var test = new Group({name: 'name:nummy, type:textfield'});
+      var test = new Group({name: 'id:nummy, type:textfield'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
         height: 0,
         left: 5,
         top: 0,
         width: -10,
-        name: 'nummy',
+        id: 'nummy',
         backgroundColor: 'transparent',
         type: 'textfield'
       });
     });
     
     it('should export textfield colors and fonts', function() {
-      var test = new Group({name: 'name:nummy, type:textfield,color:#666666,font:Museo-Bold,fontsize:27'});
+      var test = new Group({name: 'id:nummy, type:textfield,color:#666666,font:Museo-Bold,fontsize:27'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
         height: 0,
         left: 5,
         top: 0,
         width: -10,
-        name: 'nummy',
+        id: 'nummy',
         backgroundColor: 'transparent',
         font: {fontFamily:'Museo-Bold', fontSize: '27'},
         type: 'textfield',
@@ -350,14 +350,14 @@ describe('FIB Tests!', function () {
     });
 
     it('should export textfield hacked fonts properly', function() {
-      var test = new Group({name: 'name:nummy, type:textfield,color:#666666,font:Gotham-Bold-Italic,fontsize:27'});
+      var test = new Group({name: 'id:nummy, type:textfield,color:#666666,font:Gotham-Bold-Italic,fontsize:27'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
         height: 0,
         left: 5,
         top: 0,
         width: -10,
-        name: 'nummy',
+        id: 'nummy',
         backgroundColor: 'transparent',
         font: {fontFamily:'GothamBoldItalic', fontSize: '27'},
         color: '#666666',
@@ -366,28 +366,28 @@ describe('FIB Tests!', function () {
     });
 
     it('should create a textarea from a group', function() {
-      var test = new Group({name: 'name:nummy, type:textarea'});
+      var test = new Group({name: 'id:nummy, type:textarea'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
         height: 0,
         left: 5,
         top: 0,
         width: -10,
-        name: 'nummy',
+        id: 'nummy',
         backgroundColor: 'transparent',
         type: 'textarea'
       });
     });
     
     it('should create a switch from a group', function() {
-      var test = new Group({name: 'name:nummy,type:switch,value:false'});
+      var test = new Group({name: 'id:nummy,type:switch,value:false'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
         left: 0,
         top: 0,
         height: 0,
         width: 0,
-        name: 'nummy',
+        id: 'nummy',
         type: 'switch',
         value: false
       })
@@ -395,14 +395,14 @@ describe('FIB Tests!', function () {
 
     it('should create a numbox from a group', function() {
       var test = new Group(
-        {name: 'name:nummy, type:textfield, keypad:num'});
+        {name: 'id:nummy, type:textfield, keypad:num'});
       obj = FIB._extractObjects([test]);
       expect(obj[0]).toEqual({
         height: 0,
         left: 5,
         top: 0,
         width: -10,
-        name: 'nummy',
+        id: 'nummy',
         backgroundColor: 'transparent',
         type: 'textfield',
         keypad: 'num'
@@ -410,7 +410,7 @@ describe('FIB Tests!', function () {
     });
 
     it('should create a textbox image from a group', function() {
-      var test = new Group({name: 'name:nummy, type:textfield'});
+      var test = new Group({name: 'id:nummy, type:textfield'});
       obj = FIB._extractObjects([test]);
       expect(obj[1]).toEqual({
         height: 'auto',
@@ -418,13 +418,13 @@ describe('FIB Tests!', function () {
         top: 0,
         width: 'auto',
         image: 'images/TestView/nummy_img.png',
-        name: 'nummy_img',
+        id: 'nummy_img',
         type: 'image'
       });
     });
 
     it('should create a textarea image from a group', function() {
-      var test = new Group({name: 'name:nummy, type:textarea'});
+      var test = new Group({name: 'id:nummy, type:textarea'});
       obj = FIB._extractObjects([test]);
       expect(obj[1]).toEqual({
         height: 'auto',
@@ -432,14 +432,14 @@ describe('FIB Tests!', function () {
         top: 0,
         width: 'auto',
         image: 'images/TestView/nummy_img.png',
-        name: 'nummy_img',
+        id: 'nummy_img',
         type: 'image'
       });
     });
 
     it('should create a textbox from a group with background', function() {
       var test = new Group({
-        name: 'name:nummy, type:textfield', 
+        name: 'id:nummy, type:textfield', 
         pathAttributes: {
           fillColor: '#ffffff'
         }
@@ -451,7 +451,7 @@ describe('FIB Tests!', function () {
         left: 5,
         top: 0,
         width: -10,
-        name: 'nummy',
+        id: 'nummy',
         type: 'textfield',
         backgroundColor: 'transparent'
       });
@@ -459,7 +459,7 @@ describe('FIB Tests!', function () {
 
     it('should create a table view object', function () {
       var test = new RectanglePrimitive({
-        name: 'name:tab, type:table',
+        name: 'id:tab, type:table',
         height: 100, 
         width: 200
       });
@@ -468,7 +468,7 @@ describe('FIB Tests!', function () {
           top: 0,
           left: 0,
           type: 'table',
-          name: 'tab',
+          id: 'tab',
           contentWidth: 'auto',
           contentHeight: 'auto',
           height: 100,
@@ -479,7 +479,7 @@ describe('FIB Tests!', function () {
 
     it('should create a table view object without img', function () {
       var test = new RectanglePrimitive({
-        name: 'name:tab, type:table',
+        name: 'id:tab, type:table',
         opacity: 0,
         height: 100, 
         width: 200
@@ -489,7 +489,7 @@ describe('FIB Tests!', function () {
           top: 0,
           left: 0,
           type: 'table',
-          name: 'tab',
+          id: 'tab',
           contentWidth: 'auto',
           contentHeight: 'auto',
           height: 100,
@@ -499,7 +499,7 @@ describe('FIB Tests!', function () {
 
     it('should create a scrollable view object', function () {
       var test = new RectanglePrimitive({
-        name: 'name:scr, type:scrollable',
+        name: 'id:scr, type:scrollable',
         height: 100, 
         width: 200
       });
@@ -508,7 +508,7 @@ describe('FIB Tests!', function () {
           top: 0,
           left: 0,
           type: 'scrollable',
-          name: 'scr',
+          id: 'scr',
           contentWidth: 'auto',
           contentHeight: 'auto',
           height: 100,
@@ -519,7 +519,7 @@ describe('FIB Tests!', function () {
 
     it('should create a scrollable view object without img', function () {
       var test = new RectanglePrimitive({
-        name: 'name:scr, type:scrollable',
+        name: 'id:scr, type:scrollable',
         opacity: 0,
         height: 100, 
         width: 200
@@ -529,7 +529,7 @@ describe('FIB Tests!', function () {
           top: 0,
           left: 0,
           type: 'scrollable',
-          name: 'scr',
+          id: 'scr',
           contentWidth: 'auto',
           contentHeight: 'auto',
           height: 100,
@@ -539,7 +539,7 @@ describe('FIB Tests!', function () {
 
     it('should create a scroll view object', function () {
       var test = new RectanglePrimitive({
-        name: 'name:scr, type:scroll',
+        name: 'id:scr, type:scroll',
         height: 100, 
         width: 200
       });
@@ -548,7 +548,7 @@ describe('FIB Tests!', function () {
           left: 0,
           top: 0,
           type: 'scroll',
-          name: 'scroll_view',
+          id: 'scroll_view',
           height: 100,
           width: 200
       });
@@ -556,7 +556,7 @@ describe('FIB Tests!', function () {
 
     it('should create a progressbar', function() {
       var test = new Group({
-        name: 'name:nummy, type:progress, bgcolor: #333333, inverted:true',
+        name: 'id:nummy, type:progress, bgcolor: #333333, inverted:true',
         left: 50,
         top: 20,
         width: 100,
@@ -569,7 +569,7 @@ describe('FIB Tests!', function () {
         left: 50,
         top: 20,
         width: 100,
-        name: 'nummy',
+        id: 'nummy',
         type: 'progress',
         bgcolor: '#333333',
         inverted: true,
@@ -579,7 +579,7 @@ describe('FIB Tests!', function () {
 
     it('should create a web view object', function () {
       var test = new RectanglePrimitive({
-        name: 'name:webby, type:web, url:testurl.html',
+        name: 'id:webby, type:web, url:testurl.html',
         height: 100, 
         width: 200
       });
@@ -589,7 +589,7 @@ describe('FIB Tests!', function () {
           top: 0,
           type: 'web', 
           url:'testurl.html',
-          name: 'webby',
+          id: 'webby',
           height: 100,
           width: 200
       });
@@ -602,7 +602,7 @@ describe('FIB Tests!', function () {
     });
 
     it('should return empty object if no colon anywhere', function () {
-      expect(FIB._extractMetaData('asdf')).toEqual({name: 'asdf'});
+      expect(FIB._extractMetaData('asdf')).toEqual({id: 'asdf'});
     });
 
     it('should return an object with a button type', function () {
@@ -648,7 +648,7 @@ describe('FIB Tests!', function () {
               "top": 0,
               "height": 0,
               "width": 0,
-              "name":"BigTest",
+              "id":"BigTest",
               "textAlign":"left",
               "color":"#ff0000",
               "font":{"fontFamily":"","fontSize":0},
