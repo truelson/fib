@@ -366,6 +366,8 @@ var FIB = {};
 
     var objTree = extractObjects(dom.topLayers || dom.layers);
 
+    objTree.reverse();
+
     // Create file, then open.  Need to add test to check for file first
     // and delete if exists.
     var filename = FibHelper.getPageName() + '.json';
