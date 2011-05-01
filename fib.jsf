@@ -366,18 +366,13 @@ var FIB = {};
 
     var objTree = extractObjects(dom.topLayers || dom.layers);
 
-    // delete scroll_view if it exists
-    if (objTree.scroll_view) {
-      delete objTree.scroll_view;
-    }
-
     // Create file, then open.  Need to add test to check for file first
     // and delete if exists.
     var filename = FibHelper.getPageName() + '.json';
     
-    Files.deleteFileIfExisting(FibHelper.fullStylesDir + filename);
-    Files.createFile(FibHelper.fullStylesDir + filename, 'json', 'FWMX');
-    var file = Files.open(FibHelper.fullStylesDir + filename, true);
+    Files.deleteFileIfExisting(FibHelper.fullJSONDir + filename);
+    Files.createFile(FibHelper.fullJSONDir + filename, 'json', 'FWMX');
+    var file = Files.open(FibHelper.fullJSONDir + filename, true);
 
     // Make sure you write text in UTF8!
     file.writeUTF8(dojo.toJson(objTree, true, '  '));

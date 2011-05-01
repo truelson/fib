@@ -25,8 +25,8 @@ FibHelper.getResourceDirs = function () {
   // set our module convenience variables
   FibHelper.imagesDir = 'images/' + page_name + '/';
   FibHelper.fullImagesDir = FibHelper.resourcesDir + FibHelper.imagesDir;
-  FibHelper.stylesDir = 'styles/';
-  FibHelper.fullStylesDir = FibHelper.resourcesDir + FibHelper.stylesDir;
+  FibHelper.jsonDir = 'json/';
+  FibHelper.fullJSONDir = FibHelper.resourcesDir + FibHelper.jsonDir;
   return true;
 }
 

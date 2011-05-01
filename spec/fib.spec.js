@@ -663,7 +663,7 @@ describe('FIB Tests!', function () {
       });
 
       it('should open a file in the mock Test View Directory', function () {
-        expect(cSpy).toHaveBeenCalledWith('~/TestDir/styles/TestView.json',
+        expect(cSpy).toHaveBeenCalledWith('~/TestDir/json/TestView.json',
           'json', 'FWMX');
       });
     });
