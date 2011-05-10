@@ -37,7 +37,6 @@ describe('FIB Tests!', function () {
       expect(FIB._extractObjects([mockImage])[0]).
         not.toEqual(undefined);
     });
-
     it('should create a unique id if used id exists', function () {
       FibHelper.resetCounter();
       mockImage.name = 'holymackerel';
@@ -261,7 +260,7 @@ describe('FIB Tests!', function () {
     });
   });
 
-  describe('Test exporting different type objects', function () {
+    describe('Test exporting different type objects', function () {
 
     beforeEach(function () {
       FibHelper.getResourceDirs(); 
@@ -413,10 +412,10 @@ describe('FIB Tests!', function () {
       var test = new Group({name: 'id:nummy, type:textfield'});
       obj = FIB._extractObjects([test]);
       expect(obj[1]).toEqual({
-        height: 'auto',
+        height: 0,
         left: 0,
         top: 0,
-        width: 'auto',
+        width: 0,
         image: 'images/TestView/nummy_img.png',
         id: 'nummy_img',
         type: 'image'
@@ -427,10 +426,10 @@ describe('FIB Tests!', function () {
       var test = new Group({name: 'id:nummy, type:textarea'});
       obj = FIB._extractObjects([test]);
       expect(obj[1]).toEqual({
-        height: 'auto',
+        height: 0,
         left: 0,
         top: 0,
-        width: 'auto',
+        width: 0,
         image: 'images/TestView/nummy_img.png',
         id: 'nummy_img',
         type: 'image'
@@ -554,29 +553,6 @@ describe('FIB Tests!', function () {
       });
     });
 
-    it('should create a progressbar', function() {
-      var test = new Group({
-        name: 'id:nummy, type:progress, bgcolor: #333333, inverted:true',
-        left: 50,
-        top: 20,
-        width: 100,
-        height: 20
-      });
-
-      obj = FIB._extractObjects([test]);
-      expect(obj[0]).toEqual({
-        height: 20,
-        left: 50,
-        top: 20,
-        width: 100,
-        id: 'nummy',
-        type: 'progress',
-        bgcolor: '#333333',
-        inverted: true,
-        image: 'images/TestView/nummy.png'
-      });
-    });
-
     it('should create a web view object', function () {
       var test = new RectanglePrimitive({
         name: 'id:webby, type:web, url:testurl.html',
@@ -598,22 +574,22 @@ describe('FIB Tests!', function () {
 
   describe('Test extract meta data function', function () {
     it('should return empty object when given an empty string', function () {
-      expect(FIB._extractMetaData('')).toEqual({});
+      expect(FIB._parseMetadata('')).toEqual({});
     });
 
     it('should return empty object if no colon anywhere', function () {
-      expect(FIB._extractMetaData('asdf')).toEqual({id: 'asdf'});
+      expect(FIB._parseMetadata('asdf')).toEqual({id: 'asdf'});
     });
 
     it('should return an object with a button type', function () {
-      expect(FIB._extractMetaData('type:button')).toEqual({type:'button'});
+      expect(FIB._parseMetadata('type:button')).toEqual({type:'button'});
     });
     it('should return an obj w button type even with space', function () {
-      expect(FIB._extractMetaData('type : button ')).
+      expect(FIB._parseMetadata('type : button ')).
         toEqual({type:'button'});
     });
     it('should return an obj with 2 props', function () {
-      expect(FIB._extractMetaData('type: button, click:callback')).
+      expect(FIB._parseMetadata('type: button, click:callback')).
         toEqual({type:'button', click:'callback'});
     });
   });

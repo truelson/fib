@@ -145,7 +145,6 @@ FibHelper.exportPNG = function (obj, name) {
     null);
 
   new_dom.close(false);
-  
 }
 
 FibHelper.getActualSize = function getActualSize(obj) {

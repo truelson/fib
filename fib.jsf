@@ -8,20 +8,27 @@
  */
 
 // Make sure we have dojo
-try { dojo.require; } catch (e)
-    { fw.runScript(fw.currentScriptDir + "/lib/lib.js"); }
+try {
+  dojo.require
+} catch ( e ) {
+  fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
+}
 
-try { _.times(function() {}) } catch (e)
-    { fw.runScript(fw.currentScriptDir + "/lib/underscore.js"); }
+try {
+  _.times( function() {})
+} catch (e) {
+  fw.runScript( fw.currentScriptDir + '/lib/underscore.js' )
+}
 
-fw.runScript(fw.currentScriptDir + '/fib_helper.js')
+fw.runScript( fw.currentScriptDir + '/fib_helper.js' )
 
-dojo.require("dojo._base.json");
+dojo.require( 'dojo._base.json' );
+
+Array.isArray = Array.isArray || function(o) { return Object.prototype.toString.call(o) === '[object Array]'; };
 
 var FIB = {};
 
 (function () {
-
   // CONSTS
   var VERT_SCROLL_THRESHOLD = 480;
   var HORIZ_SCROLL_THRESHOLD = 320;
@@ -33,322 +40,383 @@ var FIB = {};
   // Support for our hacky font renaming to get around UIFont limitation on number
   // of weights/styles per font family to 2. Used ttx to rename fonts with their
   // weights - i.e. Gotham-Bold-Italic -> GothamBoldItalic
-  var hackyFonts = ['Gotham'];
-  var hackyFontRename = function hackyFontRename(font) {
-    for (var i = 0; i < hackyFonts.length; i++) {
-      if (0 === font.indexOf(hackyFonts[i])) {
-        return font.replace(/-/g,'');
+  var hackyFonts = ['Gotham']
+  var hackyFontRename = function hackyFontRename( font ) {
+    for ( var i = 0; i < hackyFonts.length; i++ ) {
+      if ( 0 === font.indexOf( hackyFonts[i] ) ) {
+        return font.replace( /-/g, '' )
       }
     }
-    return font;
+    return font
   }
 
-  // our recursive means of extracting objects
-  var extractObjects = function (container, pageObj) {
+  // function to extract those basic properties
+  var extractBasics = function ( fwObj ) {
+    var outObj = {}
+    var outSize = FibHelper.getActualSize( fwObj )
 
-    // initialize pageObj if need be
-    if(pageObj === undefined) {
-      pageObj = [];
+    outObj.left = outSize.left
+    outObj.top = outSize.top
+
+    // using auto here as height and width will
+    // sometimes cause the image to expanded in improper ways
+    outObj.height = outSize.height; 
+    outObj.width = outSize.width;
+
+    metadata = parseMetadata( fwObj.name )
+    
+    _.extend( outObj, metadata )
+
+    // now use meta data name if given.  Get unique if no name, or
+    // empty, or doesn't exist
+    if(!metadata.id ||
+       outObj.id == '' ||
+       !FibHelper.isNameUnique( outObj.id ))
+    {
+      outObj.id = FibHelper.getUniqueName( fwObj )
     }
+    
+    // now add to name map
+    FibHelper.nameMap[ outObj.id ] = true;
+
+    return outObj;
+  };
+
+  var extractImageBasedObject = function ( fwObj ) {
+    var outObj = extractBasics( fwObj )
+    if ( !outObj ) {
+      return null
+    }
+
+    if ( !outObj.type ) {
+      outObj.type = 'image'
+    }
+    outObj.image = FibHelper.imagesDir + outObj.id + '.png'
+    
+    // extract inactive image
+    if ( outObj.inactive ) {
+      outObj.backgroundDisabledImage = FibHelper.imagesDir + 
+        outObj.inactive + '.png'
+    }
+
+    outObj.width = fwObj.width;
+    outObj.height = fwObj.height;
+
+    // handle case for different meta data
+    var extractImageHandlers = {};
+
+    extractImageHandlers['scroll'] = function() {
+      // Is this still used?
+      outObj.id = 'scroll_view'
+      delete outObj.image
+    };
+
+    extractImageHandlers['web'] = function() {
+      delete outObj.image
+    };
+
+    extractImageHandlers['button'] = function() {
+      outObj.backgroundImage = outObj.image
+      delete outObj.image
+    };
+
+    extractImageHandlers['switch'] = function () {
+      outObj.value = false
+      delete outObj.image
+    };
+
+    extractImageHandlers['textfield'] = function() {
+      // first export the text box
+      outObj.left += 5
+      outObj.width = fwObj.width - 10
+
+      // set background to transparent
+      outObj.backgroundColor = 'transparent'
+      
+      // Set font from metadata
+      if ( outObj.font || outObj.fontsize ) {
+        var fontFamily = outObj.font
+        outObj.font = {}
+        if ( fontFamily ) {
+          outObj.font.fontFamily = fontFamily
+        }
+        if( outObj.fontsize ) {
+          outObj.font.fontSize = outObj.fontsize
+          delete outObj.fontsize
+        }
+      }
+
+      delete outObj.image
+      FibHelper.exportPNG( fwObj, outObj.id )
+
+      // then export an image behind it
+      // since adding backgroundImage to a text label causes pain
+      var outImgObj = extractBasics( fwObj )
+      delete outImgObj.font
+      delete outImgObj.fontsize
+      outImgObj.type = 'image'
+      outImgObj.id = outObj.id + "_img"
+      outImgObj.image = FibHelper.imagesDir + outImgObj.id + ".png"
+      FibHelper.nameMap[ outImgObj.id ] = true
+      FibHelper.exportPNG( fwObj, outImgObj.id )
+
+      outObj = [outObj, outImgObj]
+    }
+    extractImageHandlers[ 'textarea' ] = extractImageHandlers[ 'textfield' ]
+
+    extractImageHandlers[ 'scrollable' ] = function() {
+      outObj.contentWidth = 'auto'
+      outObj.contentHeight = 'auto'
+
+      if ( fwObj.opacity != 0 ) {
+        outObj.backgroundImage = outObj.image
+      }
+      delete outObj.image
+    }
+
+    extractImageHandlers[ 'table' ] = extractImageHandlers[ 'scrollable' ]
+
+    // now run it
+    if (outObj.type in extractImageHandlers) {
+      extractImageHandlers[outObj.type]();
+    }
+
+    if ( outObj.type != 'web' && 
+         outObj.type != 'scroll' ) {
+      FibHelper.exportPNG( fwObj, outObj.id )
+    }
+    
+    if (outObj.type == 'free_image') {
+      // Free images don't return objects because they're not exported
+      outObj = undefined
+    }
+
+    return outObj
+  }
+
+  var parseMetadata = function ( metaString ) {
+    var metadata = null
+    var name
+
+    // null if given null
+    if( !metaString || metaString === '' ) {
+      return {}
+    }
+
+    // strip semicolons
+    metaString = metaString.replace( /\;/g, '' )
+
+    if(!(metaString.match(/:/))) {
+      metaString = metaString.replace( /\ /g, '_' )
+      return {id: metaString};
+    }
+    
+    metaString = metaString.replace( /\ /g, '' )
+    metaString = metaString.replace( /:/g, '\":\"' )
+    metaString = metaString.replace( /,/g, '\",\"' )
+   
+    // add starting and ending bracket-quotes
+    metaString = '{\"' + metaString + '\"}'
+
+    // try getting metadata.  Quite possible you could fail
+    try {
+      metadata = dojo.fromJson( metaString )
+    } catch ( e ) {
+      // *TODO let user know if something crappy happens when parsing
+      console.log( 'Your Mom\'s poorly formatted string: ' + metaString )
+    }
+    return metadata
+  }
+  FIB._parseMetadata = parseMetadata
+
+  // extraction functions for different types of objects stored here
+  var fwTypeHandlers = {}
+
+  var enableGroup = false
+  ,   enablePath = true
+
+  var createFWTypeHandlers = function () {
+    fwTypeHandlers[ 'Layer' ] = function ( fwObj ) {
+      // Layers are super-special, and return arrays of elements.
+      if ( fwObj.layerType !== 'web' ) {
+        return extractObjects( fwObj.elems )
+      }
+      return []
+    }
+    
+    if ( enableGroup ) {
+      fwTypeHandlers[ 'Group' ] = function ( fwObj ) {
+        // Depending on what we want, we'll either return a view with children
+        // or an image
+        // Export a generic view based on the group
+        var outObj = extractBasics( fwObj )
+        
+        if ( outObj.flatten ) {
+          outObj = extractImageBasedObject( fwObj )
+          delete outObj.flatten
+        } else {
+          outObj.type = 'view'
+          
+          // Add children to the view
+          outObj.children = []
+
+          _(fwObj.elements).each( function ( element ) {
+            outObj.children.push( extractObject( element ))
+          })
+        }
+        return outObj
+      }    
+    }
+
+    if ( enablePath ) {
+      fwTypeHandlers[ 'Path' ] = function ( fwObj ) {
+        var outObj = extractBasics( fwObj )
+        ,   valid = true
+ 
+        outObj.type = 'canvas'
+  
+        // For now, assume we only have one contour. Multiple contours will
+        // require extra work.
+        outObj.drawList = []
+        _(fwObj.contours).each( function ( contour ) {
+          var nodes = contour.nodes
+          
+          var outContour =  {
+            type: 'curve',
+            background: fwObj.pathAttributes.fillColor,
+            color: fwObj.pathAttributes.brushColor,
+            points: []
+          }
+          _( nodes ).each( function ( point ) {
+            // Iterate through all control points
+            var p = {
+              x: point.x - outObj.left,
+              y: point.y - outObj.top,
+              predX: point.predX - outObj.left,
+              predY: point.predY - outObj.top,
+              succX: point.succX - outObj.left,
+              succY: point.succY - outObj.top
+            }
+            outContour.points.push( p )
+          })
+          outObj.drawList.push( outContour )
+        })
+          
+        if ( valid ) {
+          return outObj        
+        } else {
+          // Should fall back to image export if it's not recognized
+          return extractImageBasedObject( obj )
+        }
+      }
+    }
+
+    if ( enablePath ) {
+      fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj ) {
+        var outObj = extractBasics( fwObj )
+        ,   valid = true
+ 
+        console.log('rect:' + fwObj)
+        outObj.type = 'canvas'
+  
+        // For now, assume we only have one contour. Multiple contours will
+        // require extra work.
+        outObj.drawList = []
+        var outContour =  {
+          type: 'rect',
+          background: fwObj.pathAttributes.fillColor,
+          color: fwObj.pathAttributes.brushColor,
+          x: 0,
+          y: 0,
+          width: outObj.width,
+          height: outObj.height
+        }
+        outObj.drawList.push( outContour )
+          
+        if ( valid ) {
+          return outObj        
+        } else {
+          // Should fall back to image export if it's not recognized
+          return extractImageBasedObject( obj )
+        }
+      }
+    }
+
+    // How to handle text objects
+    fwTypeHandlers[ 'Text' ] = function ( fwObj ) {
+      var outObj = extractBasics( fwObj )
+      if ( !outObj ) {
+        return null
+      }
+      
+      outObj.textAlign = fwObj.alignment
+      outObj.color = fwObj.pathAttributes.fillColor
+      outObj.font = {
+        fontFamily: fwObj.font,
+        fontSize: fwObj.fontsize
+      }
+
+      // handle textfield... all others are labels
+      if ( outObj.type == 'textfield' ) {
+        outObj.value = fwObj.textChars
+      } else if ( outObj.type == 'textarea' ) {
+        outObj.value = fwObj.textChars
+      } else {
+        outObj.type = 'label'
+        outObj.text = fwObj.textChars
+      }
+
+      return outObj
+    }
+  }
+  
+  createFWTypeHandlers()
+
+  // extract switch helper
+  var extractObject = function (fwObj) {
+    var fwType = FibHelper.objType( fwObj )
+    ,   outObj
+    console.log('Extracting type:' + fwType)
+
+    if (!(fwType in fwTypeHandlers)) {
+      // Export everything we don't know about in image form. A reasonable assumption?
+      outObj = extractImageBasedObject( fwObj )
+    } else {
+      outObj = fwTypeHandlers[ fwType ]( fwObj )
+    }
+
+
+    // Filter font parameters if they exist
+    if (Array.isArray( outObj )) {
+      _(outObj).each( function ( obj ) {
+        if ( obj && obj.font ) {
+          obj.font.fontFamily = hackyFontRename( obj.font.fontFamily )
+        }
+      })
+    } else {
+        if ( outObj && outObj.font ) {
+          outObj.font.fontFamily = hackyFontRename( outObj.font.fontFamily )
+        }
+    }
+    return outObj
+  }
+
+
+  // our recursive means of extracting objects
+  var extractObjects = function (fwContainer) {
+    // initialize result if need be
+    var result = [];
 
     // *TODO handle resorting of layers so objects show up properly
     
-    // function to extract those basic properties
-    var extractBasics = function (obj) {
-
-      var newObj = {};
-      var new_size = FibHelper.getActualSize(obj);
-
-      newObj.left = new_size.left;
-      newObj.top = new_size.top;
-
-      // using auto here as height and width will
-      // sometimes cause the image to expanded in improper ways
-      newObj.height = new_size.height; 
-      newObj.width = new_size.width;
-
-      metaData = extractMetaData(obj.name);
-      
-      _.extend(newObj, metaData)
-
-      // now use meta data name if given.  Get unique if no name, or
-      // empty, or doesn't exist
-      if(!metaData.id ||
-         newObj.id == '' ||
-         !FibHelper.isNameUnique(newObj.id))
-      {
-        newObj.id = FibHelper.getUniqueName(obj)
-      }
-      
-      // now add to name map
-      FibHelper.nameMap[newObj.id] = true;
-
-      return newObj;
-    };
-
-    var extractImageBasedObject = function (obj) {
-      var newObj = extractBasics(obj);
-      if(!newObj) {
-        return null;
-      }
-
-      if (!newObj.type) {
-        newObj.type = 'image';
-      }
-      newObj.image = FibHelper.imagesDir + newObj.id + '.png';
-      
-      // extract inactive image
-      if (newObj.inactive) {
-        newObj.backgroundDisabledImage = FibHelper.imagesDir + 
-          newObj.inactive + '.png';
-      }
-
-      // handle case for different meta data
-      var extractType = {};
-
-      extractType['scroll'] = function() {
-        newObj.id = 'scroll_view';
-        newObj.width = obj.width;
-        newObj.height = obj.height;
-
-        delete newObj.image;
-      };
-
-      extractType['web'] = function() {
-        newObj.width = obj.width;
-        newObj.height = obj.height;
-
-        delete newObj.image;
-      };
-
-      extractType['button'] = function() {
-        newObj.width = obj.width;
-        newObj.height = obj.height;
-        
-        newObj.backgroundImage = newObj.image;
-        delete newObj.image;
-      };
-
-      extractType['switch'] = function () {
-        newObj.width = obj.width;
-        newObj.height = obj.height;
-        newObj.value = false;
-        delete newObj.image;
-      };
-
-      extractType['textfield'] = function() {
-
-        // first export the text box
-        newObj.left += 5;
-        newObj.width = obj.width - 10;
-        newObj.height = obj.height;
-
-        // set background to transparent
-        newObj.backgroundColor = 'transparent';
-
-        
-        // Set font from metadata
-        if (newObj.font || newObj.fontsize) {
-          var oldFont = newObj.font;
-          var oldFontSize = newObj.fontsize;
-          newObj.font = {};
-          if(oldFont) {
-            newObj.font.fontFamily = hackyFontRename(oldFont);
-          }
-          if(oldFontSize) {
-            newObj.font.fontSize = oldFontSize;
-            delete newObj.fontsize;
-          }
-        }
-
-        delete newObj.image
-        FibHelper.exportPNG( obj, newObj.id )
-        pageObj.push( newObj )
-
-        // then export an image behind it
-        // since adding backgroundImage to a text label causes pain
-        var newImgObj = extractBasics(obj);
-        newImgObj.type = 'image';
-        newImgObj.id = newObj.id + "_img";
-        newImgObj.image = FibHelper.imagesDir + newImgObj.id + ".png";
-        FibHelper.nameMap[newImgObj.id] = true;
-        newObj = newImgObj;
-      };
-      
-      extractType['textarea'] = extractType['textfield'];
-
-      extractType['scrollable'] = function() {
-        newObj.width = obj.width;
-        newObj.height = obj.height;
-        newObj.contentWidth = 'auto';
-        newObj.contentHeight = 'auto';
-
-        if (obj.opacity != 0) {
-          newObj.backgroundImage = newObj.image;
-        }
-        delete newObj.image;
-      }
-
-      extractType['table'] = extractType['scrollable'];
-
-      extractType['free_image'] = function() { }
-      
-      extractType['progress'] = function() {
-        newObj.width = obj.width;
-        newObj.height = obj.height;
-        if(!newObj.bgcolor) {
-          newObj.bgcolor = '#FFFFFF'; // Arbitrarily defaulted to white
-        }
-        if(newObj.inverted === 'true') {
-          newObj.inverted = true;
-        } else {
-          newObj.inverted = false;
-        }
-      }
-
-      // now run it
-      if (newObj.type in extractType) {
-        extractType[newObj.type]();
-      }
-
-      if (newObj.type != 'free_image') {
-        pageObj.push( newObj )
-      }
-
-      if (newObj.type != 'web' && 
-          newObj.type != 'scroll') {
-        FibHelper.exportPNG(obj, newObj.id);
-      }
-
-      return newObj;
-    };
-
-    var extractMetaData = function (metaString) {
-      var metaData = null;
-      var name;
-
-      // null if given null
-      if(!metaString || metaString === '') {
-        return {};
-      }
-
-      // strip semicolons
-      metaString = metaString.replace(/\;/g, "");
-
-      if(!(metaString.match(/:/))) {
-        metaString = metaString.replace(/\ /g, "_");
-        return {id: metaString};
-      }
-      
-      metaString = metaString.replace(/\ /g, "");
-      metaString = metaString.replace(/:/g, "\":\"");
-      metaString = metaString.replace(/,/g, "\",\"");
-     
-      // add starting and ending bracket-quotes
-      metaString = "{\"" + metaString + "\"}";
-
-      // try getting metadata.  Quite possible you could fail
-      try {
-        metaData = dojo.fromJson(metaString);
-      } catch (e) {
-        // *TODO let user know if something crappy happens when parsing
-        console.log('Your Mom\'s poorly formatted string: ' + metaString)
-      }
-      return metaData;
-    };
-    FIB._extractMetaData = extractMetaData;
-
-    // extraction functions for different types of objects stored here
-    extractSwitch = {};
-
-    // how to handle groups
-    extractSwitch['Group'] = function (obj) {
-
-      // exporting group as image for now
-      return extractImageBasedObject(obj);
-    };
-
-    // How to handle Image 
-    extractSwitch['Image'] = function (obj) {
-      // extract as basic image for now
-      return extractImageBasedObject(obj);
-    };
-
-    // How to handle Image 
-    extractSwitch['Instance'] = function (obj) {
-      // extract as basic image for now
-      var newObj = extractImageBasedObject(obj);
-
-      var origin_offset = {};
-      return newObj;
-    };
-
-    // How to handle Layers
-    extractSwitch['Layer'] = function (obj) {
-      if(obj.layerType !== 'web') {
-        extractObjects(obj.elems, pageObj);
-      }
-      return null;
-    };
-
-    // How to handle paths
-    extractSwitch['Path'] = function (obj) {
-      // extract as basic image for now
-      return extractImageBasedObject(obj);
-    };
-
-    // How to Rectangle Primitives
-    extractSwitch['RectanglePrimitive'] = function (obj) {
-      // extract as basic image for now
-      return extractImageBasedObject(obj);
-    };
-
-    // How to handle text objects
-    extractSwitch['Text'] = function (obj) {
-      var newObj = extractBasics(obj);
-      if (!newObj) {
-        return null;
-      }
-			
-      newObj.width = obj.width;
-      newObj.height = obj.height;
-      newObj.textAlign = obj.alignment;
-      newObj.color = obj.pathAttributes.fillColor;
-      newObj.font = {
-        fontFamily: obj.font,
-        fontSize: obj.fontsize
-      };
-
-      newObj.font.fontFamily = hackyFontRename(newObj.font.fontFamily);
-      
-      // handle textfield... all others are labels
-      if (newObj.type == 'textfield') {
-
-        newObj.value = obj.textChars;
-      } else if (newObj.type == 'textarea') {
-        newObj.value = obj.textChars;
-      } else {
-        newObj.type = 'label';
-        newObj.text = obj.textChars;
-      }
-
-      pageObj.push( newObj )
-
-      return newObj;
-    };
-
-    // extract switch helper
-    var extractObject = function (obj) {
-      var type = FibHelper.objType(obj);
-      if (!(type in extractSwitch)) {
-        return null;
-      }
-      return extractSwitch[FibHelper.objType(obj)](obj);
-    };
-
     // wrapper for the map call of extract object
-    _.map(container, extractObject);
-    return pageObj;
+    _.map(fwContainer, function( fwObj ) {
+      var outObj = extractObject( fwObj )
+      if ( outObj ) {
+        result.push( outObj )
+      }
+    });
+    return _(result).flatten()
   }
   // extractObjects added for testing purposes
   FIB._extractObjects = extractObjects;
@@ -365,7 +433,7 @@ var FIB = {};
     Files.createDirectory(FibHelper.fullImagesDir);
 
     var objTree = extractObjects(dom.topLayers || dom.layers);
-
+    
     objTree.reverse();
 
     // Create file, then open.  Need to add test to check for file first
@@ -379,7 +447,7 @@ var FIB = {};
     // Make sure you write text in UTF8!
     file.writeUTF8(dojo.toJson(objTree, true, '  '));
     file.close();
-  };
+  }
 })();
 
 // only export if this is a test
@@ -390,6 +458,7 @@ if (fw._mockFile) {
 try {
   // don't run this if you're testing it
   if(!fw._mockFile) {
+    console.log('Starting interface export')
     var ret = FIB.exportInterface();
   }
 } catch(e) {
