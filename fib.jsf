@@ -54,9 +54,10 @@ var FIB = {};
   var extractBasics = function ( fwObj, parent ) {
     var outObj = {}
     var outSize = FibHelper.getActualSize( fwObj )
+    var parentOutSize = parent ? FibHelper.getActualSize( parent ) : undefined
 
-    outObj.left = outSize.left - (parent ? parent.left : 0)
-    outObj.top = outSize.top - (parent ? parent.top : 0)
+    outObj.left = outSize.left - (parentOutSize ? parentOutSize.left : 0)
+    outObj.top = outSize.top - (parentOutSize ? parentOutSize.top : 0)
 
     // using auto here as height and width will
     // sometimes cause the image to expanded in improper ways
@@ -69,9 +70,7 @@ var FIB = {};
 
     // now use meta data name if given.  Get unique if no name, or
     // empty, or doesn't exist
-    if(!metadata.id ||
-       outObj.id == '' ||
-       !FibHelper.isNameUnique( outObj.id ))
+    if(!metadata.id || outObj.id == '')
     {
       outObj.id = FibHelper.getUniqueName( fwObj )
     }
@@ -99,8 +98,8 @@ var FIB = {};
         outObj.inactive + '.png'
     }
 
-    outObj.width = fwObj.width;
-    outObj.height = fwObj.height;
+    //outObj.width = fwObj.width;
+    //outObj.height = fwObj.height;
 
     // handle case for different meta data
     var extractImageHandlers = {};
@@ -159,7 +158,9 @@ var FIB = {};
       FibHelper.nameMap[ outImgObj.id ] = true
       FibHelper.exportPNG( fwObj, outImgObj.id )
 
-      outObj = [outObj, outImgObj]
+      console.log('textfield exports id:' + outObj.id)
+      console.log('textfield exports img id:' + outImgObj.id)
+      outObj = [ outImgObj, outObj ]
     }
     extractImageHandlers[ 'textarea' ] = extractImageHandlers[ 'textfield' ]
 
@@ -266,49 +267,58 @@ var FIB = {};
     if ( enableCanvas ) {
       fwTypeHandlers[ 'Path' ] = function ( fwObj, parent ) {
         var outObj = extractBasics( fwObj, parent )
- 
-        outObj.type = 'canvas'
-        
-        var canvasLeft = (parent ? parent.left : 0 ) + outObj.left
-        ,   canvasTop = (parent ? parent.top : 0 ) + outObj.top
- 
-        if ( fwObj.contours.length > 1) {
-          // We don't know how to handle multi-contour objects yet,
-          // render them as images
-          return extractImageBasedObject( fwObj, parent )
-        }
- 
-        outObj.drawList = []
-        _(fwObj.contours).each( function ( contour ) {
-          var nodes = contour.nodes
+
+        if ( outObj.type == 'textfield' ) {
+          // Just export it as an image-based object until we rework
+          // textfields properly as an add-on instead of a basic type
+          outObj = extractImageBasedObject( fwObj, parent )
+        } else {
+          outObj.type = 'canvas'
           
-          var outContour =  {
-            type: 'curve',
-            color: fwObj.pathAttributes.brushColor,
-            lineWidth: fwObj.pathAttributes.brush
-              ? fwObj.pathAttributes.brush.diameter : 0,
-            points: []
+          var parentOutSize = parent ? FibHelper.getActualSize( parent ) : undefined
+          var canvasLeft = (parentOutSize ? parentOutSize.left : 0 ) + outObj.left
+          ,   canvasTop = (parentOutSize ? parentOutSize.top : 0 ) + outObj.top
+   
+          if ( fwObj.contours.length > 1) {
+            // We don't know how to handle multi-contour objects yet,
+            // render them as images
+            return extractImageBasedObject( fwObj, parent )
           }
-          
-          if ( fwObj.pathAttributes.fill ) {
-            outContour.background = fwObj.pathAttributes.fillColor
-          }
-          
-          
-          _( nodes ).each( function ( point ) {
-            // Iterate through all control points
-            var p = {
-              x: point.x - canvasLeft,
-              y: point.y - canvasTop,
-              predX: point.predX - canvasLeft,
-              predY: point.predY - canvasTop,
-              succX: point.succX - canvasLeft,
-              succY: point.succY - canvasTop
+   
+          outObj.drawList = []
+          _(fwObj.contours).each( function ( contour ) {
+            var nodes = contour.nodes
+            
+            var outContour =  {
+              type: 'curve',
+              points: []
             }
-            outContour.points.push( p )
+            
+            if ( fwObj.pathAttributes.brush ) {
+              outContour.color =  fwObj.pathAttributes.brushColor,
+              outContour.linewidth = fwObj.pathAttributes.brush.diameter
+            }
+            
+            if ( fwObj.pathAttributes.fill ) {
+              outContour.background = fwObj.pathAttributes.fillColor
+            }
+            
+            
+            _( nodes ).each( function ( point ) {
+              // Iterate through all control points
+              var p = {
+                x: point.x - canvasLeft,
+                y: point.y - canvasTop,
+                predX: point.predX - canvasLeft,
+                predY: point.predY - canvasTop,
+                succX: point.succX - canvasLeft,
+                succY: point.succY - canvasTop
+              }
+              outContour.points.push( p )
+            })
+            outObj.drawList.push( outContour )
           })
-          outObj.drawList.push( outContour )
-        })
+        } 
         return outObj
       }
     }

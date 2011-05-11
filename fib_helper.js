@@ -157,6 +157,7 @@ FibHelper.getActualSize = function getActualSize(obj) {
   size.right = obj.left + obj.width;
   size.bottom = obj.top + obj.height;
 
+
   if (obj.pixelRect) {
     size.top = Math.min(size.top, obj.pixelRect.top);
     size.bottom = Math.max(size.bottom, obj.pixelRect.bottom);
