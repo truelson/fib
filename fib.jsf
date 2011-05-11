@@ -251,15 +251,20 @@ var FIB = {};
         // Export a generic view based on the group
         var outObj = extractBasics( fwObj, parent )
         
-        outObj.type = 'view'
+        if ( outObj.type === 'textfield' || outObj.type === 'free_image' ) {
+          // Export this as an image
+          outObj = extractImageBasedObject( fwObj, parent )
+        } else {
+          outObj.type = 'view'
+          
+          // Add children to the view
+          outObj.children = []
+  
+          _(fwObj.elements).each( function ( element ) {
+            outObj.children.unshift( extractObject( element, fwObj ))
+          })
+        }
         
-        // Add children to the view
-        outObj.children = []
-
-        _(fwObj.elements).each( function ( element ) {
-          outObj.children.unshift( extractObject( element, fwObj ))
-        })
-
         return outObj
       }    
     }
@@ -268,7 +273,7 @@ var FIB = {};
       fwTypeHandlers[ 'Path' ] = function ( fwObj, parent ) {
         var outObj = extractBasics( fwObj, parent )
 
-        if ( outObj.type == 'textfield' ) {
+        if ( outObj.type === 'textfield' || outObj.type === 'free_image' ) {
           // Just export it as an image-based object until we rework
           // textfields properly as an add-on instead of a basic type
           outObj = extractImageBasedObject( fwObj, parent )
