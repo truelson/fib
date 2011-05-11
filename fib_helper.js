@@ -51,6 +51,7 @@ FibHelper.objType = function(obj) {
   return name;
 };
 
+
 // Get unique name for objects without names
 // adding external access to function for testing purposes
 FibHelper.nameMap = {};

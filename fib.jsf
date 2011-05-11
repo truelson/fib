@@ -269,17 +269,31 @@ var FIB = {};
       }    
     }
 
+    var exportVectorAsImage = function( fwObj ) {
+      var metadata = parseMetadata( fwObj.name )
+      var exportAsImage = false
+      if ( metadata.type === 'textfield' || metadata.type === 'free_image' ) {
+        // Just export it as an image-based object until we rework
+        // textfields properly as an add-on instead of a basic type
+        exportAsImage = true
+      } else if ( fwObj.pathAttributes.fill &&
+                  ((fwObj.pathAttributes.fill.name !== 'Solid') ||
+                   (fwObj.pathAttributes.fill.textureBlend > 0))) {
+        exportAsImage = true
+      }
+      return exportAsImage
+    }
+
     if ( enableCanvas ) {
       fwTypeHandlers[ 'Path' ] = function ( fwObj, parent ) {
-        var outObj = extractBasics( fwObj, parent )
+        var outObj
 
-        if ( outObj.type === 'textfield' || outObj.type === 'free_image' ) {
-          // Just export it as an image-based object until we rework
-          // textfields properly as an add-on instead of a basic type
+        if ( exportVectorAsImage( fwObj )) {
           outObj = extractImageBasedObject( fwObj, parent )
         } else {
+          outObj = extractBasics( fwObj, parent )
           outObj.type = 'canvas'
-          
+                   
           var parentOutSize = parent ? FibHelper.getActualSize( parent ) : undefined
           var canvasLeft = (parentOutSize ? parentOutSize.left : 0 ) + outObj.left
           ,   canvasTop = (parentOutSize ? parentOutSize.top : 0 ) + outObj.top
@@ -330,13 +344,12 @@ var FIB = {};
 
     if ( enableCanvas ) {
       fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj, parent ) {
-        var outObj = extractBasics( fwObj, parent )
+        var outObj
 
-        if ( outObj.type == 'textfield' ) {
-          // Just export it as an image-based object until we rework
-          // textfields properly as an add-on instead of a basic type
+        if ( exportVectorAsImage( fwObj )) {
           outObj = extractImageBasedObject( fwObj, parent )
         } else {
+          outObj = extractBasics( fwObj, parent )
           outObj.type = 'canvas'
     
           outObj.drawList = []
