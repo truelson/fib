@@ -51,12 +51,12 @@ var FIB = {};
   }
 
   // function to extract those basic properties
-  var extractBasics = function ( fwObj ) {
+  var extractBasics = function ( fwObj, parent ) {
     var outObj = {}
     var outSize = FibHelper.getActualSize( fwObj )
 
-    outObj.left = outSize.left
-    outObj.top = outSize.top
+    outObj.left = outSize.left - (parent ? parent.left : 0)
+    outObj.top = outSize.top - (parent ? parent.top : 0)
 
     // using auto here as height and width will
     // sometimes cause the image to expanded in improper ways
@@ -82,8 +82,8 @@ var FIB = {};
     return outObj;
   };
 
-  var extractImageBasedObject = function ( fwObj ) {
-    var outObj = extractBasics( fwObj )
+  var extractImageBasedObject = function ( fwObj, parent ) {
+    var outObj = extractBasics( fwObj, parent )
     if ( !outObj ) {
       return null
     }
@@ -147,11 +147,10 @@ var FIB = {};
       }
 
       delete outObj.image
-      FibHelper.exportPNG( fwObj, outObj.id )
+      FibHelper.exportPNG( fwObj, outObj.id ) // This line may not be necessary
 
-      // then export an image behind it
-      // since adding backgroundImage to a text label causes pain
-      var outImgObj = extractBasics( fwObj )
+      // Export the object as an image behind it.
+      var outImgObj = extractBasics( fwObj, parent )
       delete outImgObj.font
       delete outImgObj.fontsize
       outImgObj.type = 'image'
@@ -232,119 +231,121 @@ var FIB = {};
   // extraction functions for different types of objects stored here
   var fwTypeHandlers = {}
 
-  var enableGroup = false
-  ,   enablePath = true
+  var enableGroup = true
+  ,   enableCanvas = true
 
   var createFWTypeHandlers = function () {
-    fwTypeHandlers[ 'Layer' ] = function ( fwObj ) {
+    fwTypeHandlers[ 'Layer' ] = function ( fwObj, parent ) {
       // Layers are super-special, and return arrays of elements.
       if ( fwObj.layerType !== 'web' ) {
-        return extractObjects( fwObj.elems )
+        return extractObjects( fwObj.elems, parent )
       }
       return []
     }
     
     if ( enableGroup ) {
-      fwTypeHandlers[ 'Group' ] = function ( fwObj ) {
+      fwTypeHandlers[ 'Group' ] = function ( fwObj, parent ) {
         // Depending on what we want, we'll either return a view with children
         // or an image
         // Export a generic view based on the group
-        var outObj = extractBasics( fwObj )
+        var outObj = extractBasics( fwObj, parent )
         
-        if ( outObj.flatten ) {
-          outObj = extractImageBasedObject( fwObj )
-          delete outObj.flatten
-        } else {
-          outObj.type = 'view'
-          
-          // Add children to the view
-          outObj.children = []
+        outObj.type = 'view'
+        
+        // Add children to the view
+        outObj.children = []
 
-          _(fwObj.elements).each( function ( element ) {
-            outObj.children.push( extractObject( element ))
-          })
-        }
+        _(fwObj.elements).each( function ( element ) {
+          outObj.children.unshift( extractObject( element, fwObj ))
+        })
+
         return outObj
       }    
     }
 
-    if ( enablePath ) {
-      fwTypeHandlers[ 'Path' ] = function ( fwObj ) {
-        var outObj = extractBasics( fwObj )
-        ,   valid = true
+    if ( enableCanvas ) {
+      fwTypeHandlers[ 'Path' ] = function ( fwObj, parent ) {
+        var outObj = extractBasics( fwObj, parent )
  
         outObj.type = 'canvas'
-  
-        // For now, assume we only have one contour. Multiple contours will
-        // require extra work.
+        
+        var canvasLeft = (parent ? parent.left : 0 ) + outObj.left
+        ,   canvasTop = (parent ? parent.top : 0 ) + outObj.top
+ 
+        if ( fwObj.contours.length > 1) {
+          // We don't know how to handle multi-contour objects yet,
+          // render them as images
+          return extractImageBasedObject( fwObj, parent )
+        }
+ 
         outObj.drawList = []
         _(fwObj.contours).each( function ( contour ) {
           var nodes = contour.nodes
           
           var outContour =  {
             type: 'curve',
-            background: fwObj.pathAttributes.fillColor,
             color: fwObj.pathAttributes.brushColor,
+            lineWidth: fwObj.pathAttributes.brush
+              ? fwObj.pathAttributes.brush.diameter : 0,
             points: []
           }
+          
+          if ( fwObj.pathAttributes.fill ) {
+            outContour.background = fwObj.pathAttributes.fillColor
+          }
+          
+          
           _( nodes ).each( function ( point ) {
             // Iterate through all control points
             var p = {
-              x: point.x - outObj.left,
-              y: point.y - outObj.top,
-              predX: point.predX - outObj.left,
-              predY: point.predY - outObj.top,
-              succX: point.succX - outObj.left,
-              succY: point.succY - outObj.top
+              x: point.x - canvasLeft,
+              y: point.y - canvasTop,
+              predX: point.predX - canvasLeft,
+              predY: point.predY - canvasTop,
+              succX: point.succX - canvasLeft,
+              succY: point.succY - canvasTop
             }
             outContour.points.push( p )
           })
           outObj.drawList.push( outContour )
         })
-          
-        if ( valid ) {
-          return outObj        
-        } else {
-          // Should fall back to image export if it's not recognized
-          return extractImageBasedObject( obj )
-        }
+        return outObj
       }
     }
 
-    if ( enablePath ) {
-      fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj ) {
-        var outObj = extractBasics( fwObj )
-        ,   valid = true
- 
-        console.log('rect:' + fwObj)
-        outObj.type = 'canvas'
-  
-        // For now, assume we only have one contour. Multiple contours will
-        // require extra work.
-        outObj.drawList = []
-        var outContour =  {
-          type: 'rect',
-          background: fwObj.pathAttributes.fillColor,
-          color: fwObj.pathAttributes.brushColor,
-          x: 0,
-          y: 0,
-          width: outObj.width,
-          height: outObj.height
-        }
-        outObj.drawList.push( outContour )
-          
-        if ( valid ) {
-          return outObj        
+    if ( enableCanvas ) {
+      fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj, parent ) {
+        var outObj = extractBasics( fwObj, parent )
+
+        if ( outObj.type == 'textfield' ) {
+          // Just export it as an image-based object until we rework
+          // textfields properly as an add-on instead of a basic type
+          outObj = extractImageBasedObject( fwObj, parent )
         } else {
-          // Should fall back to image export if it's not recognized
-          return extractImageBasedObject( obj )
+          outObj.type = 'canvas'
+    
+          outObj.drawList = []
+          var outContour =  {
+            type: 'rect',
+            background: fwObj.pathAttributes.fillColor,
+            color: fwObj.pathAttributes.brushColor,
+            lineWidth: fwObj.pathAttributes.brush
+              ? fwObj.pathAttributes.brush.diameter : 0,
+            x: 0,
+            y: 0,
+            width: outObj.width,
+            height: outObj.height
+          }
+          outObj.drawList.unshift( outContour )
         }
+        
+        return outObj
       }
     }
 
     // How to handle text objects
-    fwTypeHandlers[ 'Text' ] = function ( fwObj ) {
-      var outObj = extractBasics( fwObj )
+    fwTypeHandlers[ 'Text' ] = function ( fwObj, parent ) {
+      var outObj = extractBasics( fwObj, parent )
       if ( !outObj ) {
         return null
       }
@@ -373,16 +374,16 @@ var FIB = {};
   createFWTypeHandlers()
 
   // extract switch helper
-  var extractObject = function (fwObj) {
+  var extractObject = function ( fwObj, parent ) {
     var fwType = FibHelper.objType( fwObj )
+    ,   metadata = parseMetadata( fwObj.name )
     ,   outObj
-    console.log('Extracting type:' + fwType)
 
-    if (!(fwType in fwTypeHandlers)) {
-      // Export everything we don't know about in image form. A reasonable assumption?
-      outObj = extractImageBasedObject( fwObj )
+    if (!(fwType in fwTypeHandlers) || metadata.flatten) {
+      // Export unknown and "flattened" objects as images
+      outObj = extractImageBasedObject( fwObj, parent )
     } else {
-      outObj = fwTypeHandlers[ fwType ]( fwObj )
+      outObj = fwTypeHandlers[ fwType ]( fwObj, parent )
     }
 
 
@@ -403,17 +404,15 @@ var FIB = {};
 
 
   // our recursive means of extracting objects
-  var extractObjects = function (fwContainer) {
+  var extractObjects = function ( fwContainer, parent ) {
     // initialize result if need be
     var result = [];
 
-    // *TODO handle resorting of layers so objects show up properly
-    
     // wrapper for the map call of extract object
     _.map(fwContainer, function( fwObj ) {
-      var outObj = extractObject( fwObj )
+      var outObj = extractObject( fwObj, parent )
       if ( outObj ) {
-        result.push( outObj )
+        result.unshift( outObj )
       }
     });
     return _(result).flatten()
@@ -432,10 +431,8 @@ var FIB = {};
     Files.deleteFileIfExisting(FibHelper.fullImagesDir); 
     Files.createDirectory(FibHelper.fullImagesDir);
 
-    var objTree = extractObjects(dom.topLayers || dom.layers);
+    var objTree = extractObjects( dom.topLayers || dom.layers )
     
-    objTree.reverse();
-
     // Create file, then open.  Need to add test to check for file first
     // and delete if exists.
     var filename = FibHelper.getPageName() + '.json';
@@ -448,7 +445,7 @@ var FIB = {};
     file.writeUTF8(dojo.toJson(objTree, true, '  '));
     file.close();
   }
-})();
+})()
 
 // only export if this is a test
 if (fw._mockFile) {
