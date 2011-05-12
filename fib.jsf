@@ -251,11 +251,13 @@ var FIB = {};
         // Export a generic view based on the group
         var outObj = extractBasics( fwObj, parent )
         
-        if ( outObj.type === 'textfield' || outObj.type === 'free_image' ) {
+        if ( outObj.type === 'textfield' || outObj.type === 'free_image' || outObj.type === 'button' ) {
           // Export this as an image
           outObj = extractImageBasedObject( fwObj, parent )
         } else {
-          outObj.type = 'view'
+          if ( !outObj.type ) {
+            outObj.type = 'view'
+          }
           
           // Add children to the view
           outObj.children = []
@@ -310,6 +312,7 @@ var FIB = {};
             
             var outContour =  {
               type: 'curve',
+              close: contour.isClosed,
               points: []
             }
             
