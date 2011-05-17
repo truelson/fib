@@ -8,7 +8,6 @@ rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib.jsf
 ln -s $FIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
 
 rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib_helper.js
-ln -s $FIB_HELP_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
 
 rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/lib
 ln -s $LIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/

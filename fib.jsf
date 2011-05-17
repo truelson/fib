@@ -20,7 +20,7 @@ try {
   fw.runScript( fw.currentScriptDir + '/lib/underscore.js' )
 }
 
-fw.runScript( fw.currentScriptDir + '/fib_helper.js' )
+fw.runScript( fw.currentScriptDir + '/lib/fib_helper.js' )
 
 dojo.require( 'dojo._base.json' );
 
