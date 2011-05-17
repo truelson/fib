@@ -8,11 +8,17 @@
  */
 
 // Make sure we have dojo
-if ( typeof dojo.require === 'undefined' )
+try {
+  dojo.require
+} catch ( e ) {
   fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
+}
 
-if ( typeof _ === 'undefined' )
+try {
+  _.times( function() {})
+} catch (e) {
   fw.runScript( fw.currentScriptDir + '/lib/underscore.js' )
+}
 
 fw.runScript( fw.currentScriptDir + '/fib_helper.js' )
 
