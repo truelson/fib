@@ -11,8 +11,6 @@ RectanglePrimitive = require("./spec_helpers/FwMock").RectanglePrimitive;
 Path = require("./spec_helpers/FwMock").Path;
 Text = require("./spec_helpers/FwMock").Text;
 
-FibHelper = require('./fib_helper.js').FibHelper;
-
 var jasmine = require('jasmine-node');
 var sys = require('sys');
 
@@ -20,6 +18,7 @@ alert = function(str) {};
 
 dojo = require('./spec_helpers/spec_dojo.js').dojo;
 dojo.require = function(str) {};
+dojo.provide = function(str) {};
 
 for(var key in jasmine) {
   global[key] = jasmine[key];

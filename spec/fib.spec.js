@@ -10,7 +10,7 @@ describe('FIB Tests!', function () {
 
   beforeEach(function() {
     FIB = require('../fib.jsf').FIB
-    FibHelper = require('../fib_helper.js').FibHelper
+    FibHelper = require('../lib/fib_helper.js').FibHelper
     fw._resetMockDom(fw._mockDOM);
     fw.selection = [];
   });

@@ -8,20 +8,11 @@
  */
 
 // Make sure we have dojo
-try {
-  dojo.require
-} catch ( e ) {
+if ( typeof dojo === 'undefined' )
   fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
-}
 
-try {
-  _.times( function() {})
-} catch (e) {
-  fw.runScript( fw.currentScriptDir + '/lib/underscore.js' )
-}
-
-fw.runScript( fw.currentScriptDir + '/lib/fib_helper.js' )
-
+dojo.require( 'underscore' )
+dojo.require( 'fib_helper' )
 dojo.require( 'dojo._base.json' );
 
 Array.isArray = Array.isArray || function(o) { return Object.prototype.toString.call(o) === '[object Array]'; };
@@ -158,8 +149,6 @@ var FIB = {};
       FibHelper.nameMap[ outImgObj.id ] = true
       FibHelper.exportPNG( fwObj, outImgObj.id )
 
-      console.log('textfield exports id:' + outObj.id)
-      console.log('textfield exports img id:' + outImgObj.id)
       outObj = [ outImgObj, outObj ]
     }
     extractImageHandlers[ 'textarea' ] = extractImageHandlers[ 'textfield' ]
@@ -223,7 +212,7 @@ var FIB = {};
       metadata = dojo.fromJson( metaString )
     } catch ( e ) {
       // *TODO let user know if something crappy happens when parsing
-      console.log( 'Your Mom\'s poorly formatted string: ' + metaString )
+      alert( 'Your Mom\'s poorly formatted string: ' + metaString )
     }
     return metadata
   }
@@ -486,7 +475,6 @@ if (fw._mockFile) {
 try {
   // don't run this if you're testing it
   if(!fw._mockFile) {
-    console.log('Starting interface export')
     var ret = FIB.exportInterface();
   }
 } catch(e) {
