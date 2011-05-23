@@ -27,7 +27,7 @@ describe('Fib Helper Tests!', function () {
           top: 0,
           width: 20, 
           height: 30, 
-          pixelRect: {top:5, bottom:25, left: 5, right: 15}
+          pixelRect: { top:5, bottom:25, left: 5, right: 15 }
         })
       })
 

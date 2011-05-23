@@ -198,7 +198,7 @@ describe( 'FIB Tests!', function () {
 
     it( 'should create an instance ImageView object', function () {
       var testInst = new Instance({ name: 'inst' })
-      var obj = FIB._extractObjects([testInst])
+      var obj = FIB._extractObjects([ testInst ])
       expect( obj[0].type ).toEqual( 'image' )
     })
 
@@ -263,11 +263,12 @@ describe( 'FIB Tests!', function () {
       FibHelper.resetCounter()
     })
 
-    it( 'should create an image from a group with unknown type', function() {
-      var test = new Group({ name: 'id:hehe' })
-      obj = FIB._extractObjects([ test ])
-      expect( obj[0].type ).toEqual( 'image' )
-    })
+    it( 'should create an image from a group with unknown type',
+      function() {
+        var test = new Group({ name: 'id:hehe' })
+        obj = FIB._extractObjects([ test ])
+        expect( obj[0].type ).toEqual( 'image' )
+      })
 
     it( 'should export a free image', function() {
       var test = new Instance({ name: 'id:tehe, type:free_image' })
@@ -293,7 +294,7 @@ describe( 'FIB Tests!', function () {
       })
     })
 
-    it( 'should create a textfield from text with hacked fonts', function() {
+    it( 'should create a textfield of text with hacked fonts', function() {
       var test = new Text({ name: 'id:textytext, type:textfield',
         font: 'Gotham-Bold', fontsize: 24 })
       obj = FIB._extractObjects([ test ])
@@ -326,7 +327,8 @@ describe( 'FIB Tests!', function () {
     })
     
     it( 'should export textfield colors and fonts', function() {
-      var test = new Group({ name: 'id:nummy, type:textfield,color:#666666,font:Museo-Bold,fontsize:27' })
+      var test = new Group({
+        name: 'id:nummy, type:textfield,color:#666666,font:Museo-Bold,fontsize:27' })
       obj = FIB._extractObjects([ test ])
       expect( obj[0]).toEqual({
         height: 0,
@@ -566,8 +568,9 @@ describe( 'FIB Tests!', function () {
   })
 
   describe( 'Test extract meta data function', function () {
-    it( 'should return empty object when given an empty string', function () {
-      expect( FIB._parseMetadata( '' )).toEqual({})
+    it( 'should return an empty object when given an empty string',
+      function () {
+        expect( FIB._parseMetadata( '' )).toEqual({})
     })
 
     it( 'should return empty object if no colon anywhere', function () {
@@ -575,7 +578,8 @@ describe( 'FIB Tests!', function () {
     })
 
     it( 'should return an object with a button type', function () {
-      expect( FIB._parseMetadata( 'type:button' )).toEqual({ type:'button' })
+      expect( FIB._parseMetadata( 'type:button' ))
+        .toEqual({ type:'button' })
     })
     it( 'should return an obj w button type even with space', function () {
       expect( FIB._parseMetadata( 'type : button ' )).
