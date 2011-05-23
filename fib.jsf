@@ -59,9 +59,8 @@ var FIB = {}
   }
 
   var extractImageBasedObject = function ( fwObj, parent ) {
-    var outObj = extractBasics( fwObj, parent )
 
-    console.log( 'image being exported: ' + fwObj.name )
+    var outObj = extractBasics( fwObj, parent )
 
     if ( !outObj ) return null
 
@@ -77,8 +76,6 @@ var FIB = {}
     var extractImageHandlers = {}
 
     extractImageHandlers[ 'scroll' ] = function() {
-      // Is this still used?
-      outObj.id = 'scroll_view'
       delete outObj.image
     }
 
@@ -206,6 +203,7 @@ var FIB = {}
       var outObj = extractBasics( fwObj, parent )
 
       if (  outObj.type === 'textfield' ||
+            outObj.type === 'textarea' ||
             outObj.type === 'free_image' ||
             outObj.type === 'button' ) {
 
@@ -220,6 +218,7 @@ var FIB = {}
         _(fwObj.elements).each( function ( element ) {
           outObj.children.unshift( extractObject( element, fwObj ))
         })
+
       }
 
       return outObj
@@ -229,7 +228,13 @@ var FIB = {}
 
       var metadata = parseMetadata( fwObj.name )
       var exportAsImage = false
-      if ( metadata.type === 'textfield' || metadata.type === 'free_image' ) {
+      if ( metadata.type === 'textfield' ||
+           metadata.type === 'textarea' ||
+           metadata.type === 'table' ||
+           metadata.type === 'scroll' ||
+           metadata.type === 'scrollable' ||
+           metadata.type === 'web' ||
+           metadata.type === 'free_image' ) {
         // Just export it as an image-based object until we rework
         // textfields properly as an add-on instead of a basic type
         exportAsImage = true
@@ -339,9 +344,7 @@ var FIB = {}
         fontSize: fwObj.fontsize
       }
 
-      if ( outObj.type == 'textfield' ) {
-        outObj.value = fwObj.textChars
-      } else if ( outObj.type == 'textarea' ) {
+      if ( outObj.type === 'textfield' || outObj.type === 'textarea' ) {
         outObj.value = fwObj.textChars
       } else {
         outObj.type = 'label'
@@ -392,7 +395,10 @@ var FIB = {}
   FIB._extractObjects = extractObjects
 
   FIB.exportInterface = function () {
+
     if( !dom || !FibHelper.getResourceDirs()) return false
+
+    FibHelper.resetCounter()
     
     Files.deleteFileIfExisting( FibHelper.fullImagesDir )
     Files.createDirectory( FibHelper.fullImagesDir )

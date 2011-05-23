@@ -205,13 +205,13 @@ describe( 'FIB Tests!', function () {
     it( 'should create a group ImageView object', function () {
       var test = new Group({ name: 'grp' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0].type ).toEqual( 'image' )
+      expect( obj[0].type ).toEqual( 'view' )
     })
 
     it( 'should create a RectanglePrimitive ImageView object', function () {
       var test = new RectanglePrimitive({ name: 'rect' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0].type ).toEqual( 'image' )
+      expect( obj[0].type ).toEqual( 'canvas' )
     })
 
   })
@@ -263,11 +263,11 @@ describe( 'FIB Tests!', function () {
       FibHelper.resetCounter()
     })
 
-    it( 'should create an image from a group with unknown type',
+    it( 'should create a grouped view from a group with unknown type',
       function() {
         var test = new Group({ name: 'id:hehe' })
         obj = FIB._extractObjects([ test ])
-        expect( obj[0].type ).toEqual( 'image' )
+        expect( obj[0].type ).toEqual( 'view' )
       })
 
     it( 'should export a free image', function() {
@@ -280,7 +280,7 @@ describe( 'FIB Tests!', function () {
       var test = new Text({ name: 'id:textytext, type:textfield',
         font: 'Museo-Bold', fontsize: 24 })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[0] ).toEqual({
         height: 0,
         left: 0,
         top: 0,
@@ -315,7 +315,7 @@ describe( 'FIB Tests!', function () {
     it( 'should create a textfield from a group', function() {
       var test = new Group({ name: 'id:nummy, type:textfield' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[1]).toEqual({
         height: 0,
         left: 5,
         top: 0,
@@ -330,7 +330,7 @@ describe( 'FIB Tests!', function () {
       var test = new Group({
         name: 'id:nummy, type:textfield,color:#666666,font:Museo-Bold,fontsize:27' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[1]).toEqual({
         height: 0,
         left: 5,
         top: 0,
@@ -346,7 +346,7 @@ describe( 'FIB Tests!', function () {
     it( 'should export textfield hacked fonts properly', function() {
       var test = new Group({ name: 'id:nummy, type:textfield,color:#666666,font:Gotham-Bold-Italic,fontsize:27' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[1]).toEqual({
         height: 0,
         left: 5,
         top: 0,
@@ -362,7 +362,7 @@ describe( 'FIB Tests!', function () {
     it( 'should create a textarea from a group', function() {
       var test = new Group({ name: 'id:nummy, type:textarea' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[1]).toEqual({
         height: 0,
         left: 5,
         top: 0,
@@ -374,16 +374,17 @@ describe( 'FIB Tests!', function () {
     })
     
     it( 'should create a switch from a group', function() {
-      var test = new Group({ name: 'id:nummy,type:switch,value:false' })
+      var test = new Group({ name: 'id:switchy,type:switch,value:false' })
       obj = FIB._extractObjects([ test ])
       expect( obj[0]).toEqual({
         left: 0,
         top: 0,
         height: 0,
         width: 0,
-        id: 'nummy',
+        id: 'switchy',
         type: 'switch',
-        value: false
+        value: 'false',
+        children: []
       })
     })
 
@@ -391,7 +392,7 @@ describe( 'FIB Tests!', function () {
       var test = new Group(
         { name: 'id:nummy, type:textfield, keypad:num' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[1]).toEqual({
         height: 0,
         left: 5,
         top: 0,
@@ -406,7 +407,7 @@ describe( 'FIB Tests!', function () {
     it( 'should create a textbox image from a group', function() {
       var test = new Group({ name: 'id:nummy, type:textfield' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[1]).toEqual({
+      expect( obj[0]).toEqual({
         height: 0,
         left: 0,
         top: 0,
@@ -420,7 +421,7 @@ describe( 'FIB Tests!', function () {
     it( 'should create a textarea image from a group', function() {
       var test = new Group({ name: 'id:nummy, type:textarea' })
       obj = FIB._extractObjects([ test ])
-      expect( obj[1]).toEqual({
+      expect( obj[0]).toEqual({
         height: 0,
         left: 0,
         top: 0,
@@ -440,7 +441,7 @@ describe( 'FIB Tests!', function () {
       })
 
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[1]).toEqual({
         height: 0,
         left: 5,
         top: 0,
@@ -458,7 +459,7 @@ describe( 'FIB Tests!', function () {
         width: 200
       })
       obj = FIB._extractObjects([ test ])
-      expect( obj[0]).toEqual({
+      expect( obj[0] ).toEqual({
           top: 0,
           left: 0,
           type: 'table',
@@ -542,7 +543,7 @@ describe( 'FIB Tests!', function () {
           left: 0,
           top: 0,
           type: 'scroll',
-          id: 'scroll_view',
+          id: 'scr',
           height: 100,
           width: 200
       })
