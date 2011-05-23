@@ -358,7 +358,7 @@ var FIB = {}
   createFWTypeHandlers()
 
   var extractObject = function ( fwObj, parent ) {
-    var fwType = FibHelper.objType( fwObj )
+    var fwType = FibHelper.objectType( fwObj )
     ,   metadata = parseMetadata( fwObj.name )
     ,   outObj
 

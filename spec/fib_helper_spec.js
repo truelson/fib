@@ -14,7 +14,7 @@ describe('Fib Helper Tests!', function () {
   describe('Helper Function tests', function () {
 
     it('should have a working object type function', function () {
-      expect(FibHelper.objType([])).toEqual('Array')
+      expect(FibHelper.objectType([])).toEqual('Array')
     })
 
     describe('ExportPNG function', function () {
