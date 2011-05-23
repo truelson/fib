@@ -27,9 +27,8 @@ var FIB = {}
   var hackyFonts = [ 'Gotham' ]
   var hackyFontRename = function hackyFontRename( font ) {
     for ( var i = 0; i < hackyFonts.length; i++ ) {
-      if ( 0 === font.indexOf( hackyFonts[i] ) ) {
+      if ( 0 === font.indexOf( hackyFonts[i] ) )
         return font.replace( /-/g, '' )
-      }
     }
     return font
   }
