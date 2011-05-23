@@ -61,6 +61,8 @@ var FIB = {}
   var extractImageBasedObject = function ( fwObj, parent ) {
     var outObj = extractBasics( fwObj, parent )
 
+    console.log( 'image being exported: ' + fwObj.name )
+
     if ( !outObj ) return null
 
     if ( !outObj.type ) outObj.type = 'image'
@@ -190,9 +192,6 @@ var FIB = {}
 
   var fwTypeHandlers = {}
 
-  var enableGroup = true
-  ,   enableCanvas = true
-
   var createFWTypeHandlers = function () {
     fwTypeHandlers[ 'Layer' ] = function ( fwObj, parent ) {
 
@@ -202,30 +201,28 @@ var FIB = {}
       return []
     }
     
-    if ( enableGroup ) {
-      fwTypeHandlers[ 'Group' ] = function ( fwObj, parent ) {
+    fwTypeHandlers[ 'Group' ] = function ( fwObj, parent ) {
 
-        var outObj = extractBasics( fwObj, parent )
+      var outObj = extractBasics( fwObj, parent )
+
+      if (  outObj.type === 'textfield' ||
+            outObj.type === 'free_image' ||
+            outObj.type === 'button' ) {
+
+        outObj = extractImageBasedObject( fwObj, parent )
+
+      } else {
+
+        if ( !outObj.type ) outObj.type = 'view'
         
-        if (  outObj.type === 'textfield' || 
-              outObj.type === 'free_image' || 
-              outObj.type === 'button' ) {
+        outObj.children = []
 
-          outObj = extractImageBasedObject( fwObj, parent )
+        _(fwObj.elements).each( function ( element ) {
+          outObj.children.unshift( extractObject( element, fwObj ))
+        })
+      }
 
-        } else {
-
-          if ( !outObj.type ) outObj.type = 'view'
-          
-          outObj.children = []
-  
-          _(fwObj.elements).each( function ( element ) {
-            outObj.children.unshift( extractObject( element, fwObj ))
-          })
-        }
-        
-        return outObj
-      }    
+      return outObj
     }
 
     var exportVectorAsImage = function( fwObj ) {
@@ -244,94 +241,90 @@ var FIB = {}
       return exportAsImage
     }
 
-    if ( enableCanvas ) {
-      fwTypeHandlers[ 'Path' ] = function ( fwObj, parent ) {
-        var outObj
+    fwTypeHandlers[ 'Path' ] = function ( fwObj, parent ) {
+      var outObj
 
-        if ( exportVectorAsImage( fwObj )) {
-          outObj = extractImageBasedObject( fwObj, parent )
-        } else {
-          outObj = extractBasics( fwObj, parent )
-          outObj.type = 'canvas'
-                   
-          var parentOutSize = parent 
-            ? FibHelper.getActualSize( parent ) 
-            : undefined
+      if ( exportVectorAsImage( fwObj )) {
+        outObj = extractImageBasedObject( fwObj, parent )
+      } else {
+        outObj = extractBasics( fwObj, parent )
+        outObj.type = 'canvas'
 
-          var canvasLeft = (parentOutSize ? parentOutSize.left : 0 ) 
-            + outObj.left
-          ,   canvasTop = (parentOutSize ? parentOutSize.top : 0 ) 
-            + outObj.top
-   
-          if ( fwObj.contours.length > 1)
-            return extractImageBasedObject( fwObj, parent )
-   
-          outObj.drawList = []
-          _(fwObj.contours).each( function ( contour ) {
-            var nodes = contour.nodes
-            
-            var outContour =  {
-              type: 'curve',
-              close: contour.isClosed,
-              points: []
+        var parentOutSize = parent
+          ? FibHelper.getActualSize( parent )
+          : undefined
+
+        var canvasLeft = (parentOutSize ? parentOutSize.left : 0 )
+          + outObj.left
+        ,   canvasTop = (parentOutSize ? parentOutSize.top : 0 )
+          + outObj.top
+
+        if ( fwObj.contours.length > 1)
+          return extractImageBasedObject( fwObj, parent )
+
+        outObj.drawList = []
+        _(fwObj.contours).each( function ( contour ) {
+          var nodes = contour.nodes
+
+          var outContour =  {
+            type: 'curve',
+            close: contour.isClosed,
+            points: []
+          }
+
+          if ( fwObj.pathAttributes.brush ) {
+            outContour.color =  fwObj.pathAttributes.brushColor,
+            outContour.linewidth = fwObj.pathAttributes.brush.diameter
+          }
+
+          if ( fwObj.pathAttributes.fill )
+            outContour.background = fwObj.pathAttributes.fillColor
+
+
+          _(nodes).each( function ( point ) {
+            var p = {
+              x: point.x - canvasLeft,
+              y: point.y - canvasTop,
+              predX: point.predX - canvasLeft,
+              predY: point.predY - canvasTop,
+              succX: point.succX - canvasLeft,
+              succY: point.succY - canvasTop
             }
-            
-            if ( fwObj.pathAttributes.brush ) {
-              outContour.color =  fwObj.pathAttributes.brushColor,
-              outContour.linewidth = fwObj.pathAttributes.brush.diameter
-            }
-            
-            if ( fwObj.pathAttributes.fill )
-              outContour.background = fwObj.pathAttributes.fillColor
-            
-            
-            _(nodes).each( function ( point ) {
-              var p = {
-                x: point.x - canvasLeft,
-                y: point.y - canvasTop,
-                predX: point.predX - canvasLeft,
-                predY: point.predY - canvasTop,
-                succX: point.succX - canvasLeft,
-                succY: point.succY - canvasTop
-              }
-              outContour.points.push( p )
-            })
-
-            outObj.drawList.push( outContour )
+            outContour.points.push( p )
           })
-        } 
 
-        return outObj
-      }
+          outObj.drawList.push( outContour )
+        })
+      } 
+
+      return outObj
     }
 
-    if ( enableCanvas ) {
-      fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj, parent ) {
-        var outObj
+    fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj, parent ) {
+      var outObj
 
-        if ( exportVectorAsImage( fwObj )) {
-          outObj = extractImageBasedObject( fwObj, parent )
-        } else {
-          outObj = extractBasics( fwObj, parent )
-          outObj.type = 'canvas'
-    
-          outObj.drawList = []
-          var outContour =  {
-            type: 'rect',
-            background: fwObj.pathAttributes.fillColor,
-            color: fwObj.pathAttributes.brushColor,
-            lineWidth: fwObj.pathAttributes.brush
-              ? fwObj.pathAttributes.brush.diameter : 0,
-            x: 0,
-            y: 0,
-            width: outObj.width,
-            height: outObj.height
-          }
-          outObj.drawList.unshift( outContour )
+      if ( exportVectorAsImage( fwObj )) {
+        outObj = extractImageBasedObject( fwObj, parent )
+      } else {
+        outObj = extractBasics( fwObj, parent )
+        outObj.type = 'canvas'
+
+        outObj.drawList = []
+        var outContour =  {
+          type: 'rect',
+          background: fwObj.pathAttributes.fillColor,
+          color: fwObj.pathAttributes.brushColor,
+          lineWidth: fwObj.pathAttributes.brush
+            ? fwObj.pathAttributes.brush.diameter : 0,
+          x: 0,
+          y: 0,
+          width: outObj.width,
+          height: outObj.height
         }
-        
-        return outObj
+        outObj.drawList.unshift( outContour )
       }
+
+      return outObj
     }
 
     fwTypeHandlers[ 'Text' ] = function ( fwObj, parent ) {
@@ -366,7 +359,7 @@ var FIB = {}
     ,   metadata = parseMetadata( fwObj.name )
     ,   outObj
 
-    if ( !(fwType in fwTypeHandlers) || metadata.flatten)
+    if ( !( fwType in fwTypeHandlers ) || metadata.flatten)
       outObj = extractImageBasedObject( fwObj, parent )
     else
       outObj = fwTypeHandlers[ fwType ]( fwObj, parent )
