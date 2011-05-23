@@ -13,20 +13,20 @@ if ( typeof dojo === 'undefined' )
 
 dojo.require( 'underscore' )
 dojo.require( 'fib_helper' )
-dojo.require( 'dojo._base.json' );
+dojo.require( 'dojo._base.json' )
 
-Array.isArray = Array.isArray || function(o) { return Object.prototype.toString.call(o) === '[object Array]'; };
+Array.isArray = Array.isArray || function(o) { return Object.prototype.toString.call(o) === '[object Array]' }
 
-var FIB = {};
+var FIB = {}
 
-(function () {
+;(function () {
   // CONSTS
-  var VERT_SCROLL_THRESHOLD = 480;
-  var HORIZ_SCROLL_THRESHOLD = 320;
+  var VERT_SCROLL_THRESHOLD = 480
+  var HORIZ_SCROLL_THRESHOLD = 320
 
   // Setup.  Here comes the dom tree
-  var dom = fw.getDocumentDOM();
-  var sel = fw.selection;
+  var dom = fw.getDocumentDOM()
+  var sel = fw.selection
 
   // Support for our hacky font renaming to get around UIFont limitation on number
   // of weights/styles per font family to 2. Used ttx to rename fonts with their
@@ -52,8 +52,8 @@ var FIB = {};
 
     // using auto here as height and width will
     // sometimes cause the image to expanded in improper ways
-    outObj.height = outSize.height; 
-    outObj.width = outSize.width;
+    outObj.height = outSize.height
+    outObj.width = outSize.width
 
     metadata = parseMetadata( fwObj.name )
     
@@ -67,10 +67,10 @@ var FIB = {};
     }
     
     // now add to name map
-    FibHelper.nameMap[ outObj.id ] = true;
+    FibHelper.nameMap[ outObj.id ] = true
 
-    return outObj;
-  };
+    return outObj
+  }
 
   var extractImageBasedObject = function ( fwObj, parent ) {
     var outObj = extractBasics( fwObj, parent )
@@ -89,31 +89,31 @@ var FIB = {};
         outObj.inactive + '.png'
     }
 
-    //outObj.width = fwObj.width;
-    //outObj.height = fwObj.height;
+    //outObj.width = fwObj.width
+    //outObj.height = fwObj.height
 
     // handle case for different meta data
-    var extractImageHandlers = {};
+    var extractImageHandlers = {}
 
     extractImageHandlers['scroll'] = function() {
       // Is this still used?
       outObj.id = 'scroll_view'
       delete outObj.image
-    };
+    }
 
     extractImageHandlers['web'] = function() {
       delete outObj.image
-    };
+    }
 
     extractImageHandlers['button'] = function() {
       outObj.backgroundImage = outObj.image
       delete outObj.image
-    };
+    }
 
     extractImageHandlers['switch'] = function () {
       outObj.value = false
       delete outObj.image
-    };
+    }
 
     extractImageHandlers['textfield'] = function() {
       // first export the text box
@@ -167,7 +167,7 @@ var FIB = {};
 
     // now run it
     if (outObj.type in extractImageHandlers) {
-      extractImageHandlers[outObj.type]();
+      extractImageHandlers[outObj.type]()
     }
 
     if ( outObj.type != 'web' && 
@@ -197,7 +197,7 @@ var FIB = {};
 
     if(!(metaString.match(/:/))) {
       metaString = metaString.replace( /\ /g, '_' )
-      return {id: metaString};
+      return {id: metaString}
     }
     
     metaString = metaString.replace( /\ /g, '' )
@@ -426,7 +426,7 @@ var FIB = {};
   // our recursive means of extracting objects
   var extractObjects = function ( fwContainer, parent ) {
     // initialize result if need be
-    var result = [];
+    var result = []
 
     // wrapper for the map call of extract object
     _.map(fwContainer, function( fwObj ) {
@@ -434,49 +434,49 @@ var FIB = {};
       if ( outObj ) {
         result.unshift( outObj )
       }
-    });
+    })
     return _(result).flatten()
   }
   // extractObjects added for testing purposes
-  FIB._extractObjects = extractObjects;
+  FIB._extractObjects = extractObjects
 
   // The actual function you call to export a page
   FIB.exportInterface = function () {
     // get root resource directory
     if(!dom || !FibHelper.getResourceDirs()) {
-      return false;
+      return false
     }
     
     // delete the image directory first
     Files.deleteFileIfExisting(FibHelper.fullImagesDir); 
-    Files.createDirectory(FibHelper.fullImagesDir);
+    Files.createDirectory(FibHelper.fullImagesDir)
 
     var objTree = extractObjects( dom.topLayers || dom.layers )
     
     // Create file, then open.  Need to add test to check for file first
     // and delete if exists.
-    var filename = FibHelper.getPageName() + '.json';
+    var filename = FibHelper.getPageName() + '.json'
     
-    Files.deleteFileIfExisting(FibHelper.fullJSONDir + filename);
-    Files.createFile(FibHelper.fullJSONDir + filename, 'json', 'FWMX');
-    var file = Files.open(FibHelper.fullJSONDir + filename, true);
+    Files.deleteFileIfExisting(FibHelper.fullJSONDir + filename)
+    Files.createFile(FibHelper.fullJSONDir + filename, 'json', 'FWMX')
+    var file = Files.open(FibHelper.fullJSONDir + filename, true)
 
     // Make sure you write text in UTF8!
-    file.writeUTF8(dojo.toJson(objTree, true, '  '));
-    file.close();
+    file.writeUTF8(dojo.toJson(objTree, true, '  '))
+    file.close()
   }
 })()
 
 // only export if this is a test
 if (fw._mockFile) {
-  exports.FIB = FIB;
+  exports.FIB = FIB
 }
 
 try {
   // don't run this if you're testing it
   if(!fw._mockFile) {
-    var ret = FIB.exportInterface();
+    var ret = FIB.exportInterface()
   }
 } catch(e) {
-  alert([e.lineNumber, e.message]);
-};
+  alert([e.lineNumber, e.message])
+}
