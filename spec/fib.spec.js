@@ -11,6 +11,8 @@ describe( 'FIB Tests!', function () {
   beforeEach( function() {
     FIB = require( '../fib.jsf' ).FIB
     FibHelper = require( '../lib/fib_helper.js' ).FibHelper
+    FibHelper.getResourceDirs()
+
     fw._resetMockDom( fw._mockDOM )
     fw.selection = []
   })
@@ -226,7 +228,6 @@ describe( 'FIB Tests!', function () {
   describe( 'Test exporting button parameters', function () {
 
     beforeEach( function () {
-     FibHelper.getResourceDirs(); 
     })
 
     afterEach( function () {
@@ -263,7 +264,6 @@ describe( 'FIB Tests!', function () {
     describe( 'Test exporting different type objects', function () {
 
     beforeEach( function () {
-      FibHelper.getResourceDirs(); 
     })
 
     afterEach( function () {

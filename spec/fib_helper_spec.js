@@ -7,8 +7,11 @@
 describe('Fib Helper Tests!', function () {
 
   beforeEach(function() {
-    fw._resetMockDom(fw._mockDOM)
     fw.selection = []
+  })
+
+  afterEach(function() {
+    FibHelper.cleanup()
   })
 
   describe('Helper Function tests', function () {
@@ -39,7 +42,8 @@ describe('Fib Helper Tests!', function () {
 
       it('should set exportOptions.exportFormat to PNG', function() {
         FibHelper.exportPNG(img, 'TestPlace')
-        expect(fw._mockDOM.exportOptions.exportFormat).toEqual('PNG')
+        expect(FibHelper.sandboxDOM.exportOptions.exportFormat)
+          .toEqual('PNG')
       })
 
       it('should set canvas size to full bounds', function() {

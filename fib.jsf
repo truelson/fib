@@ -420,8 +420,8 @@ var FIB = {}
     Files.createDirectory( FibHelper.fullImagesDir )
 
     var objTree = extractObjects( dom.topLayers || dom.layers )
-    
-    var filename = FibHelper.getPageName() + '.json'
+
+    var filename = FibHelper.pageName + '.json'
     
     Files.deleteFileIfExisting( FibHelper.fullJSONDir + filename )
     Files.createFile( FibHelper.fullJSONDir + filename, 'json', 'FWMX' )
@@ -429,6 +429,8 @@ var FIB = {}
 
     file.writeUTF8(dojo.toJson( objTree, true, '  ' ))
     file.close()
+
+    FibHelper.cleanup()
   }
 })()
 

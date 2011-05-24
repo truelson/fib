@@ -153,6 +153,9 @@ fw.createDocument = function() {
     getSelectionBounds: function() {return {}},
 
     clipCut: function() {},
+    clipCopy: function() {
+      mockCopyObj = fw.selection
+    },
     clipPaste: function() {
       mockLayer.elems.push(mockCopyObj)
     },
@@ -162,6 +165,9 @@ fw.createDocument = function() {
 
     setDocumentResolution: function() {},
     setDocumentCanvasSize: function() {},
+
+    deleteAllInDocument: function() {},
+    makeActive: function() {},
 
     layers: [mockLayer]
   })
