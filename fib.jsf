@@ -311,7 +311,7 @@ var FIB = {}
 
         outObj.background = fwObj.pathAttributes.fillColor
         outObj.borderWidth = fwObj.pathAttributes.brush
-          ? fwObj.pathAttributes.brushDiameter
+          ? fwObj.pathAttributes.brush.diameter
           : 0
         outObj.borderColor = fwObj.pathAttributes.brushColor
 
