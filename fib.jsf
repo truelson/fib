@@ -1,5 +1,4 @@
-if ( typeof dojo === 'undefined' )
-  fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
+fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
 dojo.require( 'underscore' )
 dojo.require( 'fib_helper' )
