@@ -37,7 +37,9 @@ var FIB = {}
 
     var outObj        = {}
     ,   outSize       = FibHelper.getActualSize( fwObj )
-    ,   parentOutSize = parent ? FibHelper.getActualSize( parent ) : undefined
+    ,   parentOutSize = parent
+      ? FibHelper.getActualSize( parent )
+      : undefined
 
     outObj.left = outSize.left - (parentOutSize ? parentOutSize.left : 0)
     outObj.top = outSize.top - (parentOutSize ? parentOutSize.top : 0)
