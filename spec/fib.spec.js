@@ -208,11 +208,18 @@ describe( 'FIB Tests!', function () {
       expect( obj[0].type ).toEqual( 'view' )
     })
 
-    it( 'should create a RectanglePrimitive ImageView object', function () {
+    it( 'should create a RectanglePrimitive canvas object', function () {
       var test = new RectanglePrimitive({ name: 'rect' })
       obj = FIB._extractObjects([ test ])
       expect( obj[0].type ).toEqual( 'canvas' )
     })
+
+    it( 'should create a RectanglePrimitive simple view', function () {
+      var test = new RectanglePrimitive({ name: 'type: view' })
+      obj = FIB._extractObjects([ test ])
+      expect( obj[0].type ).toEqual( 'view' )
+    })
+
 
   })
 

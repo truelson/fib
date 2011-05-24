@@ -307,10 +307,25 @@ var FIB = {}
     fwTypeHandlers[ 'RectanglePrimitive' ] = function ( fwObj, parent ) {
       var outObj
 
+      var extractSimpleRectangle = function( fwObj, outObj ) {
+
+        outObj.background = fwObj.pathAttributes.fillColor
+        outObj.borderWidth = fwObj.pathAttributes.brush
+          ? fwObj.pathAttributes.brushDiameter
+          : 0
+        outObj.borderColor = fwObj.pathAttributes.brushColor
+
+        return outObj
+      }
+
       if ( exportVectorAsImage( fwObj )) {
         outObj = extractImageBasedObject( fwObj, parent )
       } else {
         outObj = extractBasics( fwObj, parent )
+
+        if ( outObj.type === 'view' )
+          return extractSimpleRectangle( fwObj, outObj )
+
         outObj.type = 'canvas'
 
         outObj.drawList = []
