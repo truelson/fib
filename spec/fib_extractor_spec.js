@@ -1,13 +1,12 @@
 describe( 'Fib Export Object Tests!', function () {
 
-
-  beforeEach(function() {
+  beforeEach( function() {
     FibExtractor = require( '../lib/fib_extractor' ).FibExtractor
     FibHelper = require( '../lib/fib_helper' ).FibHelper
     fw.selection = []
   })
 
-  afterEach(function() {
+  afterEach( function() {
     FibHelper.cleanup()
   })
 
@@ -121,6 +120,14 @@ describe( 'Fib Export Object Tests!', function () {
           top: 50,
           type: 'image',
         })
+    })
+
+    it( 'should export an image if rectangle is a free_image', function() {
+      testRectangle.name = 'id: testObject, type: free_image'
+      spyOn( FibHelper, 'exportPNG' )
+      expect( FibExtractor.extract( testRectangle )).toEqual( null )
+      expect( FibHelper.exportPNG ).toHaveBeenCalledWith( testRectangle,
+        'testObject' )
     })
   })
 })
