@@ -2,7 +2,6 @@ fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
 dojo.require( 'underscore' )
 dojo.require( 'fib_helper' )
-dojo.require( 'fib_extractor' )
 dojo.require( 'dojo._base.json' )
 
 Array.isArray = Array.isArray ||
