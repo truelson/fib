@@ -7,6 +7,7 @@
 describe('Fib Helper Tests!', function () {
 
   beforeEach(function() {
+    FibHelper = require( '../lib/fib_helper' ).FibHelper
     fw.selection = []
   })
 
@@ -55,6 +56,30 @@ describe('Fib Helper Tests!', function () {
         expect(fw._mockDOM.setDocumentCanvasSize).toHaveBeenCalledWith({
           left: 0, top:0, right: 20, bottom: 30
         }, true)
+      })
+    })
+
+    describe( 'Test extract meta data function', function () {
+      it( 'should return an empty object when given an empty string',
+        function () {
+          expect( FibHelper.parseMetadata( '' )).toEqual({})
+      })
+
+      it( 'should return empty object if no colon anywhere', function () {
+        expect( FibHelper.parseMetadata( 'asdf' )).toEqual({ id: 'asdf' })
+      })
+
+      it( 'should return an object with a button type', function () {
+        expect( FibHelper.parseMetadata( 'type:button' ))
+          .toEqual({ type:'button' })
+      })
+      it( 'should return an obj w button type even with space', function () {
+        expect( FibHelper.parseMetadata( 'type : button ' )).
+          toEqual({ type:'button' })
+      })
+      it( 'should return an obj with 2 props', function () {
+        expect( FibHelper.parseMetadata( 'type: button, click:callback' )).
+          toEqual({ type:'button', click:'callback' })
       })
     })
 
