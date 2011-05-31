@@ -168,5 +168,18 @@ describe( 'Fib Export Object Tests!', function () {
         type: 'textarea'
       })
     })
+
+    it( 'should export a switch', function() {
+      testRectangle.name = 'id: testObject, type: switch'
+      expect( FibExtractor.extract( testRectangle )).toEqual({
+        id: 'testObject',
+        value: false,
+        width: 20,
+        height: 30,
+        left: 40,
+        top: 50,
+        type: 'switch'
+      })
+    })
   })
 })
