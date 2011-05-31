@@ -36,6 +36,15 @@ process.argv.forEach(function(arg){
 
 // Have to hack the directory here. not sure why.
 jasmine.executeSpecsInFolder(__dirname + '/spec', function(runner, log){
-  process.exit(runner.results().failedCount);
+  var exit = function() {
+    process.exit( runner.results().failedCount );
+  };
+
+  if ( require( 'tty' ).isatty() ) {
+    process.stdout.on( 'drain', exit );
+  } else {
+    exit();
+  }
+
 }, isVerbose, showColors);
 
