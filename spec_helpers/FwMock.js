@@ -76,6 +76,11 @@ exports.Instance = Instance
 
 var RectanglePrimitive = function (spec) {
   fw._mockHelpers.setBasics(this)
+  this.pathAttributes = {
+    fillColor: '#ff0000',
+    brushColor: '#00ff00',
+    brush: { diameter: 1 }
+  }
   if(spec) _.extend(this, spec) 
 }
 RectanglePrimitive.prototype.toString = function () {

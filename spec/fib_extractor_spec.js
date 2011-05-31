@@ -64,7 +64,10 @@ describe( 'Fib Export Object Tests!', function () {
           height: 30,
           left: 40,
           top: 50,
-          type: 'view'
+          type: 'view',
+          background: '#ff0000',
+          borderWidth: 1,
+          borderColor: '#00ff00'
         })
     })
 
@@ -77,7 +80,17 @@ describe( 'Fib Export Object Tests!', function () {
           height: 30,
           left: 40,
           top: 50,
-          type: 'canvas'
+          type: 'canvas',
+          drawList: [{
+            type: 'rect',
+            background: '#ff0000',
+            color: '#00ff00',
+            lineWidth: 1,
+            x: 0,
+            y: 0,
+            width: 20,
+            height: 30
+          }]
         })
     })
   })
