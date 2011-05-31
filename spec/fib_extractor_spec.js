@@ -142,5 +142,31 @@ describe( 'Fib Export Object Tests!', function () {
         type: 'button'
       })
     })
+
+    it( 'should export a textfield', function() {
+      testRectangle.name = 'id: testObject, type: textfield'
+      expect( FibExtractor.extract( testRectangle )).toEqual({
+        id: 'testObject',
+        backgroundColor: 'transparent',
+        width: 20,
+        height: 30,
+        left: 40,
+        top: 50,
+        type: 'textfield'
+      })
+    })
+
+    it( 'should export a textarea', function() {
+      testRectangle.name = 'id: testObject, type: textarea'
+      expect( FibExtractor.extract( testRectangle )).toEqual({
+        id: 'testObject',
+        backgroundColor: 'transparent',
+        width: 20,
+        height: 30,
+        left: 40,
+        top: 50,
+        type: 'textarea'
+      })
+    })
   })
 })
