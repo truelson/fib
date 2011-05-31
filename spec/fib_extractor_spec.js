@@ -122,12 +122,25 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export an image if rectangle is a free_image', function() {
+    it( 'should export only an image file if a free_image', function() {
       testRectangle.name = 'id: testObject, type: free_image'
       spyOn( FibHelper, 'exportPNG' )
       expect( FibExtractor.extract( testRectangle )).toEqual( null )
       expect( FibHelper.exportPNG ).toHaveBeenCalledWith( testRectangle,
         'testObject' )
+    })
+
+    it( 'should export a button', function() {
+      testRectangle.name = 'id: testObject, type: button'
+      expect( FibExtractor.extract( testRectangle )).toEqual({
+        id: 'testObject',
+        width: 20,
+        height: 30,
+        backgroundImage: 'images/TestView/testObject.png',
+        left: 40,
+        top: 50,
+        type: 'button'
+      })
     })
   })
 })
