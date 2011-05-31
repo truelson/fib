@@ -93,5 +93,34 @@ describe( 'Fib Export Object Tests!', function () {
           }]
         })
     })
+
+    it( 'should export a rectangle told that it is an image', function() {
+      testRectangle.name = 'id: testObject, type: image'
+      expect( FibExtractor.extract( testRectangle ))
+        .toEqual({
+          id: 'testObject',
+          width: 20,
+          height: 30,
+          image: 'images/TestView/testObject.png',
+          left: 40,
+          top: 50,
+          type: 'image'
+        })
+    })
+
+    it( 'should export a rectangle with an inactive image', function() {
+      testRectangle.name = 'id: testObject, type: image, inactive: funk'
+      expect( FibExtractor.extract( testRectangle ))
+        .toEqual({
+          backgroundDisabledImage: 'images/TestView/funk.png',
+          id: 'testObject',
+          width: 20,
+          height: 30,
+          image: 'images/TestView/testObject.png',
+          left: 40,
+          top: 50,
+          type: 'image',
+        })
+    })
   })
 })
