@@ -47,7 +47,7 @@ var FIB = {}
     outObj.height = outSize.height
     outObj.width = outSize.width
 
-    metadata = parseMetadata( fwObj.name )
+    metadata = FibHelper.parseMetadata( fwObj.name )
     
     _.extend( outObj, metadata )
 
@@ -170,35 +170,6 @@ var FIB = {}
     return outObj
   }
 
-  var parseMetadata = function ( metaString ) {
-    var metadata = null
-    var name
-
-    if( !metaString || metaString === '' ) return {}
-
-    metaString = metaString.replace( /\;/g, '' )
-
-    if( !(metaString.match( /:/ ))) {
-      metaString = metaString.replace( /\ /g, '_' )
-      return { id: metaString }
-    }
-    
-    metaString = metaString.replace( /\ /g, '' )
-    metaString = metaString.replace( /:/g, '\":\"' )
-    metaString = metaString.replace( /,/g, '\",\"' )
-   
-    metaString = '{\"' + metaString + '\"}'
-
-    try {
-      metadata = dojo.fromJson( metaString )
-    } catch ( e ) {
-      alert( 'Your Mom\'s poorly formatted string: ' + metaString )
-    }
-
-    return metadata
-  }
-  FIB._parseMetadata = parseMetadata
-
   var fwTypeHandlers = {}
 
   var createFWTypeHandlers = function () {
@@ -238,7 +209,7 @@ var FIB = {}
 
     var exportVectorAsImage = function( fwObj ) {
 
-      var metadata = parseMetadata( fwObj.name )
+      var metadata = FibHelper.parseMetadata( fwObj.name )
       var exportAsImage = false
       if ( metadata.type === 'textfield' ||
            metadata.type === 'textarea' ||
@@ -379,7 +350,7 @@ var FIB = {}
 
   var extractObject = function ( fwObj, parent ) {
     var fwType = FibHelper.objectType( fwObj )
-    ,   metadata = parseMetadata( fwObj.name )
+    ,   metadata = FibHelper.parseMetadata( fwObj.name )
     ,   outObj
 
     if ( !( fwType in fwTypeHandlers ) || metadata.flatten)
@@ -394,8 +365,8 @@ var FIB = {}
           obj.font.fontFamily = hackyFontRename( obj.font.fontFamily )
       })
     } else {
-        if ( outObj && outObj.font )
-          outObj.font.fontFamily = hackyFontRename( outObj.font.fontFamily )
+      if ( outObj && outObj.font )
+        outObj.font.fontFamily = hackyFontRename( outObj.font.fontFamily )
     }
     return outObj
   }
