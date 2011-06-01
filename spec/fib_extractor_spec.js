@@ -261,6 +261,11 @@ describe( 'Fib Export Object Tests!', function () {
       testLayer.layerType = 'web'
       expect( FibExtractor.extract( testLayer )).toEqual([])
     })
+
+    it( 'should not have a null from a free image', function() {
+      testLayer.elems.push( new Group({ name: 'type:free_image' }))
+      expect( FibExtractor.extract( testLayer ).length ).toEqual( 2 )
+    })
   })
 
   describe( 'Extract Group Function', function() {
