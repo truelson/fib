@@ -3,6 +3,7 @@ describe( 'Fib Export Object Tests!', function () {
   beforeEach( function() {
     FibExtractor = require( '../lib/fib_extractor' ).FibExtractor
     FibHelper = require( '../lib/fib_helper' ).FibHelper
+    FibHelper.getResourceDirs()
     fw.selection = []
   })
 
