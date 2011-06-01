@@ -391,21 +391,21 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract this as a vector', function() {
-      expect( FibExtractor.extractVectorAsImage( testPath ))
+      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( false )
     })
 
     it( 'should extract this as an image due to contours ', function() {
       testPath.contours.push( {} )
       testPath.contours.push( {} )
-      expect( FibExtractor.extractVectorAsImage( testPath ))
+      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
 
     it( 'should extract this as an image due to fill name', function() {
       testPath.pathAttributes.fill = {}
       testPath.pathAttributes.fill.name = 'stripe'
-      expect( FibExtractor.extractVectorAsImage( testPath ))
+      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
 
@@ -413,7 +413,7 @@ describe( 'Fib Export Object Tests!', function () {
       testPath.pathAttributes.fill = {}
       testPath.pathAttributes.fill.name = 'Solid'
       testPath.pathAttributes.fill.textureBlend = 1
-      expect( FibExtractor.extractVectorAsImage( testPath ))
+      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
   })
@@ -506,6 +506,5 @@ describe( 'Fib Export Object Tests!', function () {
           }]
         })
     })
-
   })
 })
