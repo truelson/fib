@@ -75,7 +75,7 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a canvas rectangle when given no type', function() {
+    it( 'should export a view rectangle when given no type', function() {
       testRectangle.name = 'id: testObject'
       expect( FibExtractor.extract( testRectangle ))
         .toEqual({
@@ -85,17 +85,10 @@ describe( 'Fib Export Object Tests!', function () {
           height: 30,
           left: 40,
           top: 50,
-          type: 'canvas',
-          drawList: [{
-            type: 'rect',
-            background: '#ff0000',
-            color: '#00ff00',
-            lineWidth: 1,
-            x: 0,
-            y: 0,
-            width: 20,
-            height: 30
-          }]
+          type: 'view',
+          background: '#ff0000',
+          borderWidth: 1,
+          borderColor: '#00ff00'
         })
     })
 
@@ -149,8 +142,9 @@ describe( 'Fib Export Object Tests!', function () {
       })
     })
 
-    it( 'should export a textfield', function() {
-      testRectangle.name = 'id: testObject, type: textfield'
+    it( 'should export a textfield with font and size', function() {
+      testRectangle.name =
+        'id: testObject, type: textfield, font: Museo, fontsize: 22'
       expect( FibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         opacity: 1,
@@ -159,6 +153,10 @@ describe( 'Fib Export Object Tests!', function () {
         height: 30,
         left: 40,
         top: 50,
+        font: {
+          fontFamily: 'Museo',
+          fontSize: '22'
+        },
         type: 'textfield'
       })
     })
@@ -546,7 +544,7 @@ describe( 'Fib Export Object Tests!', function () {
             type: 'curve',
             color: '#00ff00',
             close: true,
-            linewidth: 1,
+            lineWidth: 1,
             points: [{
               x: -39, y: -48,
               predX: -37, predY: -46,
