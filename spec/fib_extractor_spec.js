@@ -266,6 +266,26 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
+    it( 'should extract text as a label with shortened font', function() {
+      testText.font = 'Gotham-Black'
+      expect( FibExtractor.extract( testText ))
+        .toEqual({
+          id: '__TestViewText1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'label',
+          color: '#ff0000',
+          font: {
+            fontFamily: 'GothamBlack',
+            fontSize: 0
+          },
+          textAlign: 'left',
+          text: ''
+        })
+    })
+
     it( 'should extract text as a textfield', function() {
       testText.name = 'type: textfield'
       expect( FibExtractor.extract( testText ))
@@ -280,6 +300,28 @@ describe( 'Fib Export Object Tests!', function () {
           backgroundColor: 'transparent',
           font: {
             fontFamily: '',
+            fontSize: 0
+          },
+          textAlign: 'left',
+          value: ''
+        })
+    })
+
+    it( 'should extract text as a textfield with short font', function() {
+      testText.name = 'type: textfield'
+      testText.font = 'Gotham-Black'
+      expect( FibExtractor.extract( testText ))
+        .toEqual({
+          id: '__TestViewText1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'textfield',
+          color: '#ff0000',
+          backgroundColor: 'transparent',
+          font: {
+            fontFamily: 'GothamBlack',
             fontSize: 0
           },
           textAlign: 'left',
