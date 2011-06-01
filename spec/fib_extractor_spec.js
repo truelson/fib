@@ -255,5 +255,44 @@ describe( 'Fib Export Object Tests!', function () {
           drawList: [ ]
         })
     })
+
+    it( 'should export a canvas view with drawList', function() {
+      testPath.contours = [{
+        isClosed: true,
+        nodes: [
+          { x: 1, y: 2, predX: 3, predY: 4, succX: 5, succY: 6 },
+          { x: 7, y: 8, predX: 9, predY: 10, succX: 11, succY: 12 },
+          { x: 0, y: 1, predX: 2, predY: 3, succX: 4, succY: 5 }
+        ]
+      }]
+      expect( FibExtractor.extract( testPath ))
+        .toEqual({
+          id: '__TestViewPath1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'canvas',
+          drawList: [{
+            type: 'curve',
+            color: '#00ff00',
+            close: true,
+            linewidth: 1,
+            points: [{
+              x: -39, y: -48,
+              predX: -37, predY: -46,
+              succX: -35, succY: -44
+            }, {
+              x : -33, y : -42,
+              predX : -31, predY : -40,
+              succX : -29, succY : -38
+            }, {
+              x : -40, y : -49,
+              predX : -38, predY : -47,
+              succX : -36, succY : -45 }]
+          }]
+        })
+    })
+
   })
 })
