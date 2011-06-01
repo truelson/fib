@@ -240,6 +240,38 @@ describe( 'Fib Export Object Tests!', function () {
     })
   })
 
+  describe( 'Extract Group Function', function() {
+    var testGroup
+
+    beforeEach( function() {
+      testGroup = new Group({ width: 20, height: 30, left: 40, top: 50 })
+    })
+
+    it( 'should extract a group as a view', function() {
+      expect( FibExtractor.extract( testGroup ))
+        .toEqual({
+          id: '__TestViewGroup1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'view',
+          children: []
+        })
+    })
+
+    it( 'should extract a group as a view with children', function() {
+      testGroup.elements = []
+      testGroup.elements.push( new Text({ name: 'id: woohoo' }))
+      testGroup.elements.push( new Text({ name: 'id: woohoo2' }))
+
+      var newGroup = FibExtractor.extract( testGroup )
+      expect( newGroup.children[1].id ).toEqual( 'woohoo' )
+      expect( newGroup.children[0].id ).toEqual( 'woohoo2' )
+    })
+
+  })
+
   describe( 'Extract Text Function', function() {
     var testText
 
