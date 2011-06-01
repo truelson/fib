@@ -7,6 +7,7 @@ describe( 'Fib Export Object Tests!', function () {
   })
 
   afterEach( function() {
+    FibHelper.resetCounter()
     FibHelper.cleanup()
   })
 
@@ -180,6 +181,79 @@ describe( 'Fib Export Object Tests!', function () {
         top: 50,
         type: 'switch'
       })
+    })
+  })
+
+
+  describe( 'ExtractVectorAsImage Function', function() {
+    var testPath
+
+    beforeEach( function() {
+      testPath = new Path({ width: 20, height: 30, left: 40, top: 50 })
+    })
+
+    it( 'should extract this as a vector', function() {
+      expect( FibExtractor.extractVectorAsImage( testPath ))
+        .toEqual( false )
+    })
+
+    it( 'should extract this as an image due to contours ', function() {
+      testPath.contours.push( {} )
+      testPath.contours.push( {} )
+      expect( FibExtractor.extractVectorAsImage( testPath ))
+        .toEqual( true )
+    })
+
+    it( 'should extract this as an image due to fill name', function() {
+      testPath.pathAttributes.fill = {}
+      testPath.pathAttributes.fill.name = 'stripe'
+      expect( FibExtractor.extractVectorAsImage( testPath ))
+        .toEqual( true )
+    })
+
+    it( 'should extract this as an image due to fill ', function() {
+      testPath.pathAttributes.fill = {}
+      testPath.pathAttributes.fill.name = 'Solid'
+      testPath.pathAttributes.fill.textureBlend = 1
+      expect( FibExtractor.extractVectorAsImage( testPath ))
+        .toEqual( true )
+    })
+  })
+
+  describe( 'Extract Path Function', function() {
+    var testPath
+
+    beforeEach( function() {
+      testPath = new Path({ width: 20, height: 30, left: 40, top: 50 })
+    })
+
+    it( 'should export a simple rectangle from a path', function() {
+      testPath.name = 'type: view'
+      expect( FibExtractor.extract( testPath ))
+        .toEqual({
+          id: '__TestViewPath1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'view',
+          background: '#ff0000',
+          borderWidth: 1,
+          borderColor: '#00ff00'
+        })
+    })
+
+    it( 'should export a canvas view', function() {
+      expect( FibExtractor.extract( testPath ))
+        .toEqual({
+          id: '__TestViewPath1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'canvas',
+          drawList: [ ]
+        })
     })
   })
 })

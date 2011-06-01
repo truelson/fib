@@ -88,6 +88,21 @@ RectanglePrimitive.prototype.toString = function () {
 }
 exports.RectanglePrimitive = RectanglePrimitive
 
+var Path = function( spec ) {
+  fw._mockHelpers.setBasics( this )
+  this.pathAttributes = {
+    fillColor: '#ff0000',
+    brushColor: '#00ff00',
+    brush: { diameter: 1 }
+  }
+  this.contours = []
+  if( spec ) _.extend(this, spec)
+}
+Path.prototype.toString = function () {
+  return '[object Path]'
+}
+exports.Path = Path
+
 // Layer
 var Layer = function (spec) {
   this.elems = []
