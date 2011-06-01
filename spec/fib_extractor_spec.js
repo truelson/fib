@@ -184,6 +184,74 @@ describe( 'Fib Export Object Tests!', function () {
     })
   })
 
+  describe( 'Extract Text Function', function() {
+    var testText
+
+    beforeEach( function() {
+      testText = new Text({ width: 20, height: 30, left: 40, top: 50 })
+    })
+
+    it( 'should extract text as a label', function() {
+      expect( FibExtractor.extract( testText ))
+        .toEqual({
+          id: '__TestViewText1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'label',
+          color: '#ff0000',
+          font: {
+            fontFamily: '',
+            fontSize: 0
+          },
+          textAlign: 'left',
+          text: ''
+        })
+    })
+
+    it( 'should extract text as a textfield', function() {
+      testText.name = 'type: textfield'
+      expect( FibExtractor.extract( testText ))
+        .toEqual({
+          id: '__TestViewText1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'textfield',
+          color: '#ff0000',
+          backgroundColor: 'transparent',
+          font: {
+            fontFamily: '',
+            fontSize: 0
+          },
+          textAlign: 'left',
+          value: ''
+        })
+    })
+
+    it( 'should extract text as a textarea', function() {
+      testText.name = 'type: textarea'
+      expect( FibExtractor.extract( testText ))
+        .toEqual({
+          id: '__TestViewText1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'textarea',
+          color: '#ff0000',
+          backgroundColor: 'transparent',
+          font: {
+            fontFamily: '',
+            fontSize: 0
+          },
+          textAlign: 'left',
+          value: ''
+        })
+    })
+  })
 
   describe( 'ExtractVectorAsImage Function', function() {
     var testPath
