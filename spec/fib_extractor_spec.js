@@ -94,6 +94,25 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
+    it( 'should export a rectangle primitive with opacity 0', function() {
+      testRectangle.name = 'id: testObject'
+      testRectangle.opacity = 0
+      expect( FibExtractor.extract( testRectangle ))
+        .toEqual({
+          id: 'testObject',
+          opacity: 0,
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'view',
+          background: '#ff0000',
+          borderWidth: 1,
+          borderColor: '#00ff00',
+          borderRadius: 0
+        })
+    })
+
     it( 'should export a rectangle told that it is an image', function() {
       testRectangle.name = 'id: testObject, type: image'
       expect( FibExtractor.extract( testRectangle ))
