@@ -83,6 +83,24 @@ describe('Fib Helper Tests!', function () {
       })
     })
 
+    describe('Shorten Font Name Function', function() {
+      var fontObject
+      beforeEach( function() {
+        fontObject = { font: { fontFamily: 'Gotham-Black' }}
+      })
+
+      it( 'should rename hyphenated gotham fonts', function() {
+        FibHelper.shortenFont( fontObject )
+        expect( fontObject.font.fontFamily ).toEqual( 'GothamBlack' )
+      })
+
+      it( 'should not rename hyphenated museo fonts', function() {
+        fontObject.font.fontFamily = 'Museo-Slab'
+        FibHelper.shortenFont( fontObject )
+        expect( fontObject.font.fontFamily ).toEqual( 'Museo-Slab' )
+      })
+    })
+
     describe('Get Actual Size from Object tests', function() {
       var test_obj, test_rect_small, test_rect_big
 
