@@ -12,6 +12,39 @@ describe( 'Fib Export Object Tests!', function () {
     FibHelper.cleanup()
   })
 
+  describe( 'Name Creation tests', function () {
+
+    var mockImage, mockImage2
+
+    beforeEach( function () {
+      mockImage = new Image()
+      mockImage2 = new Image()
+    })
+
+    it( 'should extract an object', function () {
+      expect( FibExtractor.extractObjects([ mockImage ])[0]).
+        not.toEqual( undefined )
+    })
+
+    it( 'should use name if exists without metaData', function () {
+      mockImage.name = 'fdsa'
+      expect( FibExtractor.extractObjects([ mockImage ])[0].id )
+        .toEqual( 'fdsa' )
+    })
+
+    it( 'should use meta data id if there', function () {
+      mockImage.name = 'type:image, id:asdf'
+      expect( FibExtractor.extractObjects([ mockImage ])[0].id )
+        .toEqual( 'asdf' )
+    })
+
+    it( 'should replace spaces with underscores', function () {
+      mockImage.name = 'Control Town'
+      expect( FibExtractor.extractObjects([ mockImage ])[0].id )
+        .toEqual( 'Control_Town' )
+    })
+  })
+
   describe( 'Extract Basic Function', function() {
 
     var testObject, parent
@@ -208,6 +241,15 @@ describe( 'Fib Export Object Tests!', function () {
         top: 50,
         type: 'switch'
       })
+    })
+  })
+
+  describe( 'Test text with null name', function () {
+
+    it( 'should use text for name if name is null', function () {
+      var testText = new Text({ name: null, textChars: 'Text Name' })
+      var obj = FibExtractor.extractObjects([ testText ])
+      expect( obj[0].id ).toEqual( '__TestViewText1' )
     })
   })
 
@@ -581,6 +623,79 @@ describe( 'Fib Export Object Tests!', function () {
               succX : -36, succY : -45 }]
           }]
         })
+    })
+  })
+
+
+  describe( 'Test the full exportObjects function', function () {
+    var t1, t2, t3
+    var t1Out, t2Out, t3Out
+    var objs
+
+    beforeEach( function() {
+      t1 = new Text({ name: 't1' })
+      t1Out = {
+        color: '#ff0000',
+        font: {
+          fontFamily: '',
+          fontSize: 0
+        },
+        opacity: 1,
+        height: 0,
+        left: 0,
+        type:'label',
+        id: 't1',
+        text: '',
+        textAlign: 'left',
+        top: 0,
+        width: 0
+      }
+
+      t2 = new Text({ name: 't2' })
+      t2Out = {
+        color: '#ff0000',
+        font: {
+          fontFamily: '',
+          fontSize: 0
+        },
+        opacity: 1,
+        height: 0,
+        left: 0,
+        type:'label',
+        id: 't2',
+        text: '',
+        textAlign: 'left',
+        top: 0,
+        width: 0
+      }
+      t3 = new Text({ name: 't3' })
+      t3Out = {
+        color: '#ff0000',
+        font: {
+          fontFamily: '',
+          fontSize: 0
+        },
+        opacity: 1,
+        height: 0,
+        left: 0,
+        type:'label',
+        id: 't3',
+        text: '',
+        textAlign: 'left',
+        top: 0,
+        width: 0
+      }
+      objs = FibExtractor.extractObjects([ t1, t2, t3 ])
+    })
+
+    it( 'should have label t1', function () {
+      expect( objs[2] ).toEqual( t1Out )
+    })
+    it( 'should have label t2', function () {
+      expect( objs[1] ).toEqual( t2Out )
+    })
+    it( 'should have label t3', function () {
+      expect( objs[0] ).toEqual( t3Out )
     })
   })
 })
