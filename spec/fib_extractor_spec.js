@@ -184,6 +184,62 @@ describe( 'Fib Export Object Tests!', function () {
     })
   })
 
+  describe( 'Extract Image Function', function() {
+    var testImage
+
+    beforeEach( function() {
+      testImage = new Image({ width: 20, height: 30, left: 40, top: 50 })
+    })
+
+    it( 'should extract an image as an image', function() {
+      expect( FibExtractor.extract( testImage ))
+        .toEqual({
+          id: '__TestViewImage1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'image',
+          image: 'images/TestView/__TestViewImage1.png'
+        })
+    })
+
+    it( 'should extract an image as an image even if canvas', function() {
+      testImage.name = 'type: canvas'
+      expect( FibExtractor.extract( testImage ))
+        .toEqual({
+          id: '__TestViewImage1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'image',
+          image: 'images/TestView/__TestViewImage1.png'
+        })
+    })
+  })
+
+  describe( 'Extract Instance Function', function() {
+    var testImage
+
+    beforeEach( function() {
+      testImage = new Instance({ width: 20, height: 30, left: 40, top: 50 })
+    })
+
+    it( 'should extract an instance as an image', function() {
+      expect( FibExtractor.extract( testImage ))
+        .toEqual({
+          id: '__TestViewInstance1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'image',
+          image: 'images/TestView/__TestViewInstance1.png'
+        })
+    })
+  })
+
   describe( 'Extract Text Function', function() {
     var testText
 
@@ -321,6 +377,21 @@ describe( 'Fib Export Object Tests!', function () {
           top: 50,
           type: 'canvas',
           drawList: [ ]
+        })
+    })
+
+    it( 'should export an image', function() {
+      testPath.name = 'type: canvas'
+      testPath.contours = [1, 1]
+      expect( FibExtractor.extract( testPath ))
+        .toEqual({
+          id: '__TestViewPath1',
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'image',
+          image: 'images/TestView/__TestViewPath1.png'
         })
     })
 
