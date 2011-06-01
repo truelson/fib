@@ -240,6 +240,29 @@ describe( 'Fib Export Object Tests!', function () {
     })
   })
 
+  describe( 'Extract Layer Function', function() {
+    var testLayer
+
+    beforeEach( function() {
+      testLayer = new Layer()
+      testLayer.elems.push( new Text({ name: 'id:Text1' }))
+      testLayer.elems.push( new Text({ name: 'id:Text2' }))
+    })
+
+    it( 'should see first label of two labels', function() {
+      expect( FibExtractor.extract( testLayer )[1].id).toEqual('Text1')
+    })
+
+    it( 'should see second label of two labels', function() {
+      expect( FibExtractor.extract( testLayer )[0].id).toEqual('Text2')
+    })
+
+    it( 'should not export web layer', function() {
+      testLayer.layerType = 'web'
+      expect( FibExtractor.extract( testLayer )).toEqual([])
+    })
+  })
+
   describe( 'Extract Group Function', function() {
     var testGroup
 
@@ -258,6 +281,17 @@ describe( 'Fib Export Object Tests!', function () {
           type: 'view',
           children: []
         })
+    })
+
+    it( 'should extract a group as a view with child offset', function() {
+      testGroup.top = 20
+      testGroup.left = 10
+      testGroup.elements = []
+      testGroup.elements.push( new Text({ top: 30, left: 40 }))
+
+      var newGroup = FibExtractor.extract( testGroup )
+      expect( newGroup.children[0].top ).toEqual( 10 )
+      expect( newGroup.children[0].left ).toEqual( 30 )
     })
 
     it( 'should extract a group as a view with children', function() {
