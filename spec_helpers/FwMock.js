@@ -23,6 +23,7 @@ fw._mockHelpers.setBasics = function (obj) {
   obj.top = 0
   obj.width = 0
   obj.visible = true
+  obj.opacity = 100
   obj.pathAttributes = {
     brush: {
       brushColor: '#FFFFFF',

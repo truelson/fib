@@ -28,6 +28,7 @@ describe( 'Fib Export Object Tests!', function () {
         .toEqual({
           id: 't',
           type: 'view',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -40,6 +41,7 @@ describe( 'Fib Export Object Tests!', function () {
         .toEqual({
           id: 't',
           type: 'view',
+          opacity: 1,
           width: 20,
           height: 30,
           left: -360,
@@ -66,6 +68,7 @@ describe( 'Fib Export Object Tests!', function () {
           left: 40,
           top: 50,
           type: 'view',
+          opacity: 1,
           background: '#ff0000',
           borderWidth: 1,
           borderColor: '#00ff00'
@@ -77,6 +80,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testRectangle ))
         .toEqual({
           id: 'testObject',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -149,6 +153,7 @@ describe( 'Fib Export Object Tests!', function () {
       testRectangle.name = 'id: testObject, type: textfield'
       expect( FibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
+        opacity: 1,
         backgroundColor: 'transparent',
         width: 20,
         height: 30,
@@ -162,6 +167,7 @@ describe( 'Fib Export Object Tests!', function () {
       testRectangle.name = 'id: testObject, type: textarea'
       expect( FibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
+        opacity: 1,
         backgroundColor: 'transparent',
         width: 20,
         height: 30,
@@ -176,6 +182,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         value: false,
+        opacity: 1,
         width: 20,
         height: 30,
         left: 40,
@@ -280,6 +287,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testGroup ))
         .toEqual({
           id: '__TestViewGroup1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -323,6 +331,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -343,6 +352,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -363,6 +373,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -385,6 +396,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -406,6 +418,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -470,6 +483,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -485,6 +499,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
@@ -521,6 +536,7 @@ describe( 'Fib Export Object Tests!', function () {
       expect( FibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
+          opacity: 1,
           width: 20,
           height: 30,
           left: 40,
