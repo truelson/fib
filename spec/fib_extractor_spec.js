@@ -71,7 +71,8 @@ describe( 'Fib Export Object Tests!', function () {
           opacity: 1,
           background: '#ff0000',
           borderWidth: 1,
-          borderColor: '#00ff00'
+          borderColor: '#00ff00',
+          borderRadius: 0
         })
     })
 
@@ -88,7 +89,8 @@ describe( 'Fib Export Object Tests!', function () {
           type: 'view',
           background: '#ff0000',
           borderWidth: 1,
-          borderColor: '#00ff00'
+          borderColor: '#00ff00',
+          borderRadius: 0
         })
     })
 
@@ -489,7 +491,8 @@ describe( 'Fib Export Object Tests!', function () {
           type: 'view',
           background: '#ff0000',
           borderWidth: 1,
-          borderColor: '#00ff00'
+          borderColor: '#00ff00',
+          borderRadius: 0
         })
     })
 
