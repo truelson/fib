@@ -126,6 +126,20 @@ describe('Fib Helper Tests!', function () {
           bottom: 41
         }
 
+        test_rect_really_big = {
+          left: 0,
+          top: 0,
+          right: 10,
+          bottom: 65669
+        }
+
+        test_rect_other_really_big = {
+          left: -65669,
+          top: 0,
+          right: 1,
+          bottom: 1,
+        }
+
         this.addMatchers({
           toBeSameSizeAs: function(sizeObj) {
             if (sizeObj.width !== this.actual.width ||
@@ -158,6 +172,17 @@ describe('Fib Helper Tests!', function () {
           height: 32
         })
       })
+
+      it( 'should not use pixel rect size if invalid', function() {
+        test_obj.pixelRect = test_rect_really_big
+        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs(test_obj)
+      })
+
+      it( 'should also not use pixel rect size if invalid', function() {
+        test_obj.pixelRect = test_rect_other_really_big
+        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs(test_obj)
+      })
+
     })
   })
 })
