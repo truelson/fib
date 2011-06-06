@@ -606,6 +606,8 @@ describe( 'Fib Export Object Tests!', function () {
           type: 'canvas',
           drawList: [{
             type: 'curve',
+            x: 0,
+            y: 0,
             color: '#00ff00',
             close: true,
             lineWidth: 1,
