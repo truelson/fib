@@ -112,32 +112,20 @@ describe('Fib Helper Tests!', function () {
           height: 30
         }
 
-        test_rect_small = {
+        test_rect = new RectanglePrimitive( test_obj )
+
+        pixel_rect_small = {
           left: 6,
           top: 11,
           right: 24,
           bottom: 36
         }
 
-        test_rect_big = {
+        pixel_rect_big = {
           left: 4,
           top: 9,
           right: 26,
           bottom: 41
-        }
-
-        test_rect_really_big = {
-          left: 0,
-          top: 0,
-          right: 10,
-          bottom: 65669
-        }
-
-        test_rect_other_really_big = {
-          left: -65669,
-          top: 0,
-          right: 1,
-          bottom: 1,
         }
 
         this.addMatchers({
@@ -155,17 +143,17 @@ describe('Fib Helper Tests!', function () {
       })
 
       it('should extract same size if no pixelRect', function() {
-        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs(test_obj)
+        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
       it('should extract same size if small pixel rect', function() {
-        test_obj.pixelRect = test_rect_small
-        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs(test_obj)
+        test_rect.pixelRect = pixel_rect_small
+        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
       it('should extract pixel rect size if big pixel rect', function() {
-        test_obj.pixelRect = test_rect_big
-        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs({
+        test_rect.pixelRect = pixel_rect_big
+        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs({
           left: 4,
           top: 9,
           width: 22,
@@ -173,16 +161,23 @@ describe('Fib Helper Tests!', function () {
         })
       })
 
-      it( 'should not use pixel rect size if invalid', function() {
-        test_obj.pixelRect = test_rect_really_big
-        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs(test_obj)
+      it( 'should not use pixel rect size if no fill or brush', function() {
+        test_rect.pixelRect = pixel_rect_big
+        test_rect.pathAttributes.brush = null
+        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
-      it( 'should also not use pixel rect size if invalid', function() {
-        test_obj.pixelRect = test_rect_other_really_big
-        expect(FibHelper.getActualSize(test_obj)).toBeSameSizeAs(test_obj)
+      it( 'should use pixel rect size if fill', function() {
+        test_rect.pixelRect = pixel_rect_big
+        test_rect.pathAttributes.brush = null
+        test_rect.pathAttributes.fill = {}
+        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs({
+          left: 4,
+          top: 9,
+          width: 22,
+          height: 32
+        })
       })
-
     })
   })
 })

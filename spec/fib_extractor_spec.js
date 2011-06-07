@@ -102,7 +102,6 @@ describe( 'Fib Export Object Tests!', function () {
           top: 50,
           type: 'view',
           opacity: 1,
-          background: '#ff0000',
           borderWidth: 1,
           borderColor: '#00ff00',
           borderRadius: 0
@@ -120,7 +119,6 @@ describe( 'Fib Export Object Tests!', function () {
           left: 40,
           top: 50,
           type: 'view',
-          background: '#ff0000',
           borderWidth: 1,
           borderColor: '#00ff00',
           borderRadius: 0
@@ -139,7 +137,6 @@ describe( 'Fib Export Object Tests!', function () {
           left: 40,
           top: 50,
           type: 'view',
-          background: '#ff0000',
           borderWidth: 1,
           borderColor: '#00ff00',
           borderRadius: 0
@@ -550,7 +547,6 @@ describe( 'Fib Export Object Tests!', function () {
           left: 40,
           top: 50,
           type: 'view',
-          background: '#ff0000',
           borderWidth: 1,
           borderColor: '#00ff00',
           borderRadius: 0
