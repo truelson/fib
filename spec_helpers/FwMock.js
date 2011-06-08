@@ -187,9 +187,13 @@ fw.createDocument = function() {
 
     setDocumentResolution: function() {},
     setDocumentCanvasSize: function() {},
+    setDocumentImageSize: function() {},
 
     deleteAllInDocument: function() {},
     makeActive: function() {},
+
+    scaleSelection: function() {},
+    transformSelection: function() {},
 
     layers: [mockLayer]
   })
