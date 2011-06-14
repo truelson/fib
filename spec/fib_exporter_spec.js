@@ -1,9 +1,10 @@
 describe( 'FibExporter Tests!', function () {
 
-  var FibExporter, FibHelper
+  var FibExporter, FibExtractor, FibHelper
 
   beforeEach( function() {
     FibExporter = require( '../lib/fib_exporter.js' ).FibExporter
+    FibExtractor = require( '../lib/fib_extractor.js' ).FibExporter
     FibHelper = require( '../lib/fib_helper.js' ).FibHelper
     FibHelper.getResourceDirs()
 
@@ -18,7 +19,7 @@ describe( 'FibExporter Tests!', function () {
   })
 
   describe( 'Test the full export function', function () {
-    
+
     var files, cSpy, oSpy, wSpy, clSpy, utf8Spy
 
     beforeEach( function () {
@@ -62,8 +63,8 @@ describe( 'FibExporter Tests!', function () {
 
     it( 'should open a file in the mock Test View Directory', function() {
       expect( cSpy )
-        .toHaveBeenCalledWith( '~/TestDir/json/TestView.json', 
-          'json', 
+        .toHaveBeenCalledWith( '~/TestDir/json/TestView.json',
+          'json',
           'FWMX' )
     })
   })
