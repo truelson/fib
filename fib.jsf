@@ -1,11 +1,5 @@
 fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
-dojo.require( 'underscore' )
-dojo.require( 'fib_helper' )
-dojo.require( 'fib_extractor' )
-dojo.require( 'fib_exporter' )
-dojo.require( 'dojo._base.json' )
-
 try {
   if( !fw._mockFile ) FibExporter.exportDOM( fw.getDocumentDOM() )
 } catch(e) {
