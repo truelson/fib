@@ -28,7 +28,7 @@ describe( 'FIB Tests!', function () {
       wSpy = spyOn( fw._mockFile, 'write' )
       clSpy = spyOn( fw._mockFile, 'close' )
       fw._mockDOM.topLayers = [ new Text({ name: 'BigTest' })]
-      FIB.exportInterface()
+      FIB.exportDOM( fw.getDocumentDOM() )
     })
 
     afterEach( function () {

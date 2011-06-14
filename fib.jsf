@@ -9,10 +9,7 @@ var FIB = {}
 
 ;( function () {
 
-  var dom = fw.getDocumentDOM()
-  var sel = fw.selection
-
-  FIB.exportInterface = function () {
+  FIB.exportDOM = function ( dom ) {
 
     if( !dom || !FibHelper.getResourceDirs()) return false
 
@@ -39,7 +36,7 @@ var FIB = {}
 if ( fw._mockFile ) exports.FIB = FIB
 
 try {
-  if( !fw._mockFile ) FIB.exportInterface()
+  if( !fw._mockFile ) FIB.exportDOM( fw.getDocumentDOM() )
 } catch(e) {
   alert([ e.lineNumber, e.message ])
 }
