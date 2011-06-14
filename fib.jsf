@@ -5,11 +5,6 @@ dojo.require( 'fib_helper' )
 dojo.require( 'fib_extractor' )
 dojo.require( 'dojo._base.json' )
 
-Array.isArray = Array.isArray ||
-  function(o) {
-    return Object.prototype.toString.call(o) === '[object Array]'
-  }
-
 var FIB = {}
 
 ;( function () {
