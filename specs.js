@@ -3,6 +3,7 @@
 //
 
 fw = require("./spec_helpers/FwMock").fw;
+FwArray = require("./spec_helpers/FwMock").FwArray;
 Group = require("./spec_helpers/FwMock").Group;
 Image = require("./spec_helpers/FwMock").Image;
 Instance = require("./spec_helpers/FwMock").Instance;
