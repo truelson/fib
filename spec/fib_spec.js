@@ -1,9 +1,9 @@
-describe( 'FIB Tests!', function () {
+describe( 'FibExporter Tests!', function () {
 
-  var FIB, FibHelper
+  var FibExporter, FibHelper
 
   beforeEach( function() {
-    FIB = require( '../fib.jsf' ).FIB
+    FibExporter = require( '../lib/fib_exporter.js' ).FibExporter
     FibHelper = require( '../lib/fib_helper.js' ).FibHelper
     FibHelper.getResourceDirs()
 
@@ -12,8 +12,8 @@ describe( 'FIB Tests!', function () {
   })
 
   describe( 'Basic Fib Testing', function () {
-    it( 'should have a FIB object', function () {
-      expect( FIB ).not.toEqual( 'undefined' )
+    it( 'should have a FibExporter object', function () {
+      expect( FibExporter ).not.toEqual( 'undefined' )
     })
   })
 
@@ -28,7 +28,7 @@ describe( 'FIB Tests!', function () {
       wSpy = spyOn( fw._mockFile, 'write' )
       clSpy = spyOn( fw._mockFile, 'close' )
       fw._mockDOM.topLayers = [ new Text({ name: 'BigTest' })]
-      FIB.exportDOM( fw.getDocumentDOM() )
+      FibExporter.exportDOM( fw.getDocumentDOM() )
     })
 
     afterEach( function () {
