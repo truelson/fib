@@ -37,6 +37,14 @@ fw._mockHelpers.setBasics = function (obj) {
   }
 }
 
+// FwArray
+var FwArray = function( obj ) {
+}
+FwArray.prototype.toString = function() {
+  return '[object FwArray]'
+}
+exports.FwArray = FwArray
+
 // Group
 var Group = function (spec) {
   fw._mockHelpers.setBasics(this)
