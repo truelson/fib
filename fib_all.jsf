@@ -1,0 +1,7 @@
+fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
+
+try {
+  if( !fw._mockFile ) FibExporter.exportDOM( fw.getDocumentDOM() )
+} catch(e) {
+  alert([ e.lineNumber, e.message ])
+}
