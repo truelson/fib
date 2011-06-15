@@ -1,7 +1,19 @@
 fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
+var exportAll = function() {
+  var dom = fw.getDocumentDOM()
+
+  if ( !FibHelper.getResourceDirs() ) return false
+
+
+  for( var i = 0; i < dom.pagesCount; i++ ) {
+    dom.changeCurrentPage( i )
+    FibExporter.exportDOM( dom )
+  }
+}
+
 try {
-  if( !fw._mockFile ) FibExporter.exportDOM( fw.getDocumentDOM() )
+  exportAll()
 } catch(e) {
   alert([ e.lineNumber, e.message ])
 }
