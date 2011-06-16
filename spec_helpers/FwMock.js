@@ -203,6 +203,8 @@ fw.createDocument = function() {
     scaleSelection: function() {},
     transformSelection: function() {},
 
+    selectAll: function() {},
+
     layers: [mockLayer]
   })
 }
