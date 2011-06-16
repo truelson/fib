@@ -35,14 +35,6 @@ describe('Fib Helper Tests!', function () {
         })
       })
 
-      it('should call FwArray', function () {
-        var oldFwArray = FwArray
-        FwArray = createSpy()
-        FibHelper.exportPNG( img, 'TestPlace' )
-        expect(FwArray).toHaveBeenCalledWith( img )
-        FwArray = oldFwArray
-      })
-
       it('should maintain selection', function () {
         fw.selection = 'test'
         FibHelper.exportPNG(img, 'TestPlace')
