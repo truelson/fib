@@ -5,7 +5,6 @@ var exportAll = function() {
 
   if ( !FibHelper.getResourceDirs() ) return false
 
-
   for( var i = 0; i < dom.pagesCount; i++ ) {
     dom.changeCurrentPage( i )
     FibExporter.exportDOM( dom )
