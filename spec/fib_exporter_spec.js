@@ -1,12 +1,11 @@
 describe( 'FibExporter Tests!', function () {
 
-  var FibExporter, FibExtractor, FibHelper
+  var FibExporter
 
   beforeEach( function() {
     FibExporter = require( '../lib/fib_exporter.js' ).FibExporter
-    FibExtractor = require( '../lib/fib_extractor.js' ).FibExporter
     FibHelper = require( '../lib/fib_helper.js' ).FibHelper
-    FibHelper.getResourceDirs()
+    FibExtractor = require( '../lib/fib_extractor.js' ).FibExtractor
 
     fw._resetMockDom( fw._mockDOM )
     fw.selection = []
@@ -29,11 +28,10 @@ describe( 'FibExporter Tests!', function () {
       wSpy = spyOn( fw._mockFile, 'write' )
       clSpy = spyOn( fw._mockFile, 'close' )
       fw._mockDOM.topLayers = [ new Text({ name: 'BigTest' })]
-      FibExporter.exportDOM( fw.getDocumentDOM() )
+      FibExporter.exportDOM( fw.getDocumentDOM(), '~/TestDir/' )
     })
 
     afterEach( function () {
-      FibHelper.resetCounter()
     })
 
     it( 'should export a label and write the json to file', function() {

@@ -7,18 +7,19 @@
 describe('Fib Helper Tests!', function () {
 
   beforeEach(function() {
-    FibHelper = require( '../lib/fib_helper' ).FibHelper
+    fibHelper = require( '../lib/fib_helper' ).FibHelper
+      .createFibHelper( fw.createDocument(), '~/TestView/' )
     fw.selection = []
   })
 
   afterEach(function() {
-    FibHelper.cleanup()
+    fibHelper.cleanup()
   })
 
   describe('Helper Function tests', function () {
 
     it('should have a working object type function', function () {
-      expect(FibHelper.objectType([])).toEqual('Array')
+      expect(fibHelper.objectType([])).toEqual('Array')
     })
 
     describe('ExportPNG function', function () {
@@ -37,22 +38,22 @@ describe('Fib Helper Tests!', function () {
 
       it('should maintain selection', function () {
         fw.selection = 'test'
-        FibHelper.exportPNG(img, 'TestPlace')
+        fibHelper.exportPNG(img, 'TestPlace')
         expect(fw.selection).toEqual('test')
       })
 
       it('should set exportOptions.exportFormat to PNG', function() {
-        FibHelper.exportPNG(img, 'TestPlace')
-        expect(FibHelper.sandboxDOM.exportOptions.exportFormat)
+        fibHelper.exportPNG(img, 'TestPlace')
+        expect(fibHelper.sandboxDOM.exportOptions.exportFormat)
           .toEqual('PNG')
       })
 
       it('should set canvas size to full bounds', function() {
-        spyOn(FibHelper, 'getActualSize').andReturn({
+        spyOn(fibHelper, 'getActualSize').andReturn({
           left: 0, top:0, right: 20, bottom: 30
         })
         spyOn(fw._mockDOM, 'setDocumentCanvasSize')
-        FibHelper.exportPNG(img, 'TestImage')
+        fibHelper.exportPNG(img, 'TestImage')
         expect(fw._mockDOM.setDocumentCanvasSize).toHaveBeenCalledWith({
           left: 0, top:0, right: 20, bottom: 30
         }, true)
@@ -62,23 +63,23 @@ describe('Fib Helper Tests!', function () {
     describe( 'Test extract meta data function', function () {
       it( 'should return an empty object when given an empty string',
         function () {
-          expect( FibHelper.parseMetadata( '' )).toEqual({})
+          expect( fibHelper.parseMetadata( '' )).toEqual({})
       })
 
       it( 'should return empty object if no colon anywhere', function () {
-        expect( FibHelper.parseMetadata( 'asdf' )).toEqual({ id: 'asdf' })
+        expect( fibHelper.parseMetadata( 'asdf' )).toEqual({ id: 'asdf' })
       })
 
       it( 'should return an object with a button type', function () {
-        expect( FibHelper.parseMetadata( 'type:button' ))
+        expect( fibHelper.parseMetadata( 'type:button' ))
           .toEqual({ type:'button' })
       })
       it( 'should return an obj w button type even with space', function () {
-        expect( FibHelper.parseMetadata( 'type : button ' )).
+        expect( fibHelper.parseMetadata( 'type : button ' )).
           toEqual({ type:'button' })
       })
       it( 'should return an obj with 2 props', function () {
-        expect( FibHelper.parseMetadata( 'type: button, click:callback' )).
+        expect( fibHelper.parseMetadata( 'type: button, click:callback' )).
           toEqual({ type:'button', click:'callback' })
       })
     })
@@ -90,13 +91,13 @@ describe('Fib Helper Tests!', function () {
       })
 
       it( 'should rename hyphenated gotham fonts', function() {
-        FibHelper.shortenFont( fontObject )
+        fibHelper.shortenFont( fontObject )
         expect( fontObject.font.fontFamily ).toEqual( 'GothamBlack' )
       })
 
       it( 'should not rename hyphenated museo fonts', function() {
         fontObject.font.fontFamily = 'Museo-Slab'
-        FibHelper.shortenFont( fontObject )
+        fibHelper.shortenFont( fontObject )
         expect( fontObject.font.fontFamily ).toEqual( 'Museo-Slab' )
       })
     })
@@ -143,17 +144,17 @@ describe('Fib Helper Tests!', function () {
       })
 
       it('should extract same size if no pixelRect', function() {
-        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
+        expect(fibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
       it('should extract same size if small pixel rect', function() {
         test_rect.pixelRect = pixel_rect_small
-        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
+        expect(fibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
       it('should extract pixel rect size if big pixel rect', function() {
         test_rect.pixelRect = pixel_rect_big
-        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs({
+        expect(fibHelper.getActualSize(test_rect)).toBeSameSizeAs({
           left: 4,
           top: 9,
           width: 22,
@@ -164,14 +165,14 @@ describe('Fib Helper Tests!', function () {
       it( 'should not use pixel rect size if no fill or brush', function() {
         test_rect.pixelRect = pixel_rect_big
         test_rect.pathAttributes.brush = null
-        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
+        expect(fibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
       it( 'should use pixel rect size if fill', function() {
         test_rect.pixelRect = pixel_rect_big
         test_rect.pathAttributes.brush = null
         test_rect.pathAttributes.fill = {}
-        expect(FibHelper.getActualSize(test_rect)).toBeSameSizeAs({
+        expect(fibHelper.getActualSize(test_rect)).toBeSameSizeAs({
           left: 4,
           top: 9,
           width: 22,

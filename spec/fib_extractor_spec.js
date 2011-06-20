@@ -1,15 +1,20 @@
-describe( 'Fib Export Object Tests!', function () {
+describe( 'Fib Extract Object Tests!', function () {
+
+  var fibExtractor, fibHelper
 
   beforeEach( function() {
-    FibExtractor = require( '../lib/fib_extractor' ).FibExtractor
-    FibHelper = require( '../lib/fib_helper' ).FibHelper
-    FibHelper.getResourceDirs()
+    var FibHelper = require( '../lib/fib_helper' ).FibHelper
+    var FibExtractor = require( '../lib/fib_extractor' ).FibExtractor
+
+    fibHelper = FibHelper
+      .createFibHelper( fw.createDocument(), '~/TestDir/' )
+
+    fibExtractor = FibExtractor.createFibExtractor( fibHelper )
+
     fw.selection = []
   })
 
   afterEach( function() {
-    FibHelper.resetCounter()
-    FibHelper.cleanup()
   })
 
   describe( 'Name Creation tests', function () {
@@ -22,25 +27,25 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract an object', function () {
-      expect( FibExtractor.extractObjects([ mockImage ])[0]).
+      expect( fibExtractor.extractObjects([ mockImage ])[0]).
         not.toEqual( undefined )
     })
 
     it( 'should use name if exists without metaData', function () {
       mockImage.name = 'fdsa'
-      expect( FibExtractor.extractObjects([ mockImage ])[0].id )
+      expect( fibExtractor.extractObjects([ mockImage ])[0].id )
         .toEqual( 'fdsa' )
     })
 
     it( 'should use meta data id if there', function () {
       mockImage.name = 'type:image, id:asdf'
-      expect( FibExtractor.extractObjects([ mockImage ])[0].id )
+      expect( fibExtractor.extractObjects([ mockImage ])[0].id )
         .toEqual( 'asdf' )
     })
 
     it( 'should replace spaces with underscores', function () {
       mockImage.name = 'Control Town'
-      expect( FibExtractor.extractObjects([ mockImage ])[0].id )
+      expect( fibExtractor.extractObjects([ mockImage ])[0].id )
         .toEqual( 'Control_Town' )
     })
   })
@@ -57,7 +62,7 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract the basics of a simple object', function() {
-      expect( FibExtractor.extractBasic( testObject ))
+      expect( fibExtractor.extractBasic( testObject ))
         .toEqual({
           id: 't',
           type: 'view',
@@ -70,7 +75,7 @@ describe( 'Fib Export Object Tests!', function () {
     })
     
     it( 'should extract the basics of an object with parent', function() {
-      expect( FibExtractor.extractBasic( testObject, parent ))
+      expect( fibExtractor.extractBasic( testObject, parent ))
         .toEqual({
           id: 't',
           type: 'view',
@@ -92,8 +97,8 @@ describe( 'Fib Export Object Tests!', function () {
         { name:'type:view', width: 20, height: 30, left: 40, top: 50 })
     })
 
-    it( 'should export a rectangle primitive type as view', function() {
-      expect( FibExtractor.extract( testRectangle ))
+    it( 'should extract a rectangle primitive type as view', function() {
+      expect( fibExtractor.extract( testRectangle ))
         .toEqual({
           id: '__TestViewRectanglePrimitive1',
           width: 20,
@@ -108,9 +113,9 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a view rectangle when given no type', function() {
+    it( 'should extract a view rectangle when given no type', function() {
       testRectangle.name = 'id: testObject'
-      expect( FibExtractor.extract( testRectangle ))
+      expect( fibExtractor.extract( testRectangle ))
         .toEqual({
           id: 'testObject',
           opacity: 1,
@@ -125,10 +130,10 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a rectangle primitive with opacity 0', function() {
+    it( 'should extract a rectangle primitive with opacity 0', function() {
       testRectangle.name = 'id: testObject'
       testRectangle.opacity = 0
-      expect( FibExtractor.extract( testRectangle ))
+      expect( fibExtractor.extract( testRectangle ))
         .toEqual({
           id: 'testObject',
           opacity: 0,
@@ -143,9 +148,9 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a rectangle told that it is an image', function() {
+    it( 'should extract a rectangle told that it is an image', function() {
       testRectangle.name = 'id: testObject, type: image'
-      expect( FibExtractor.extract( testRectangle ))
+      expect( fibExtractor.extract( testRectangle ))
         .toEqual({
           id: 'testObject',
           width: 20,
@@ -157,9 +162,9 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a rectangle with an inactive image', function() {
+    it( 'should extract a rectangle with an inactive image', function() {
       testRectangle.name = 'id: testObject, type: image, inactive: funk'
-      expect( FibExtractor.extract( testRectangle ))
+      expect( fibExtractor.extract( testRectangle ))
         .toEqual({
           backgroundDisabledImage: 'images/TestView/funk.png',
           id: 'testObject',
@@ -172,17 +177,17 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export only an image file if a free_image', function() {
+    it( 'should extract only an image file if a free_image', function() {
       testRectangle.name = 'id: testObject, type: free_image'
-      spyOn( FibHelper, 'exportPNG' )
-      expect( FibExtractor.extract( testRectangle )).toEqual( null )
-      expect( FibHelper.exportPNG ).toHaveBeenCalledWith( testRectangle,
+      spyOn( fibHelper, 'exportPNG' )
+      expect( fibExtractor.extract( testRectangle )).toEqual( null )
+      expect( fibHelper.exportPNG ).toHaveBeenCalledWith( testRectangle,
         'testObject' )
     })
 
-    it( 'should export a button', function() {
+    it( 'should extract a button', function() {
       testRectangle.name = 'id: testObject, type: button'
-      expect( FibExtractor.extract( testRectangle )).toEqual({
+      expect( fibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         width: 20,
         height: 30,
@@ -193,10 +198,10 @@ describe( 'Fib Export Object Tests!', function () {
       })
     })
 
-    it( 'should export a textfield with font and size', function() {
+    it( 'should extract a textfield with font and size', function() {
       testRectangle.name =
         'id: testObject, type: textfield, font: Museo, fontsize: 22'
-      expect( FibExtractor.extract( testRectangle )).toEqual({
+      expect( fibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         opacity: 1,
         backgroundColor: 'transparent',
@@ -212,9 +217,9 @@ describe( 'Fib Export Object Tests!', function () {
       })
     })
 
-    it( 'should export a textarea', function() {
+    it( 'should extract a textarea', function() {
       testRectangle.name = 'id: testObject, type: textarea'
-      expect( FibExtractor.extract( testRectangle )).toEqual({
+      expect( fibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         opacity: 1,
         backgroundColor: 'transparent',
@@ -226,9 +231,9 @@ describe( 'Fib Export Object Tests!', function () {
       })
     })
 
-    it( 'should export a switch', function() {
+    it( 'should extract a switch', function() {
       testRectangle.name = 'id: testObject, type: switch'
-      expect( FibExtractor.extract( testRectangle )).toEqual({
+      expect( fibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         value: false,
         opacity: 1,
@@ -245,7 +250,7 @@ describe( 'Fib Export Object Tests!', function () {
 
     it( 'should use text for name if name is null', function () {
       var testText = new Text({ name: null, textChars: 'Text Name' })
-      var obj = FibExtractor.extractObjects([ testText ])
+      var obj = fibExtractor.extractObjects([ testText ])
       expect( obj[0].id ).toEqual( '__TestViewText1' )
     })
   })
@@ -258,7 +263,7 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract an image as an image', function() {
-      expect( FibExtractor.extract( testImage ))
+      expect( fibExtractor.extract( testImage ))
         .toEqual({
           id: '__TestViewImage1',
           width: 20,
@@ -272,7 +277,7 @@ describe( 'Fib Export Object Tests!', function () {
 
     it( 'should extract an image as an image even if canvas', function() {
       testImage.name = 'type: canvas'
-      expect( FibExtractor.extract( testImage ))
+      expect( fibExtractor.extract( testImage ))
         .toEqual({
           id: '__TestViewImage1',
           width: 20,
@@ -293,7 +298,7 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract an instance as an image', function() {
-      expect( FibExtractor.extract( testImage ))
+      expect( fibExtractor.extract( testImage ))
         .toEqual({
           id: '__TestViewInstance1',
           width: 20,
@@ -316,21 +321,21 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should see first label of two labels', function() {
-      expect( FibExtractor.extract( testLayer )[1].id).toEqual('Text1')
+      expect( fibExtractor.extract( testLayer )[1].id).toEqual('Text1')
     })
 
     it( 'should see second label of two labels', function() {
-      expect( FibExtractor.extract( testLayer )[0].id).toEqual('Text2')
+      expect( fibExtractor.extract( testLayer )[0].id).toEqual('Text2')
     })
 
-    it( 'should not export web layer', function() {
+    it( 'should not extract web layer', function() {
       testLayer.layerType = 'web'
-      expect( FibExtractor.extract( testLayer )).toEqual([])
+      expect( fibExtractor.extract( testLayer )).toEqual([])
     })
 
     it( 'should not have a null from a free image', function() {
       testLayer.elems.push( new Group({ name: 'type:free_image' }))
-      expect( FibExtractor.extract( testLayer ).length ).toEqual( 2 )
+      expect( fibExtractor.extract( testLayer ).length ).toEqual( 2 )
     })
   })
 
@@ -342,7 +347,7 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract a group as a view', function() {
-      expect( FibExtractor.extract( testGroup ))
+      expect( fibExtractor.extract( testGroup ))
         .toEqual({
           id: '__TestViewGroup1',
           opacity: 1,
@@ -361,7 +366,7 @@ describe( 'Fib Export Object Tests!', function () {
       testGroup.elements = []
       testGroup.elements.push( new Text({ top: 30, left: 40 }))
 
-      var newGroup = FibExtractor.extract( testGroup )
+      var newGroup = fibExtractor.extract( testGroup )
       expect( newGroup.children[0].top ).toEqual( 10 )
       expect( newGroup.children[0].left ).toEqual( 30 )
     })
@@ -371,7 +376,7 @@ describe( 'Fib Export Object Tests!', function () {
       testGroup.elements.push( new Text({ name: 'id: woohoo' }))
       testGroup.elements.push( new Text({ name: 'id: woohoo2' }))
 
-      var newGroup = FibExtractor.extract( testGroup )
+      var newGroup = fibExtractor.extract( testGroup )
       expect( newGroup.children[1].id ).toEqual( 'woohoo' )
       expect( newGroup.children[0].id ).toEqual( 'woohoo2' )
     })
@@ -386,7 +391,7 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract text as a label', function() {
-      expect( FibExtractor.extract( testText ))
+      expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
           opacity: 1,
@@ -407,7 +412,7 @@ describe( 'Fib Export Object Tests!', function () {
 
     it( 'should extract text as a label with shortened font', function() {
       testText.font = 'Gotham-Black'
-      expect( FibExtractor.extract( testText ))
+      expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
           opacity: 1,
@@ -428,7 +433,7 @@ describe( 'Fib Export Object Tests!', function () {
 
     it( 'should extract text as a textfield', function() {
       testText.name = 'type: textfield'
-      expect( FibExtractor.extract( testText ))
+      expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
           opacity: 1,
@@ -451,7 +456,7 @@ describe( 'Fib Export Object Tests!', function () {
     it( 'should extract text as a textfield with short font', function() {
       testText.name = 'type: textfield'
       testText.font = 'Gotham-Black'
-      expect( FibExtractor.extract( testText ))
+      expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
           opacity: 1,
@@ -473,7 +478,7 @@ describe( 'Fib Export Object Tests!', function () {
 
     it( 'should extract text as a textarea', function() {
       testText.name = 'type: textarea'
-      expect( FibExtractor.extract( testText ))
+      expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
           opacity: 1,
@@ -502,21 +507,21 @@ describe( 'Fib Export Object Tests!', function () {
     })
 
     it( 'should extract this as a vector', function() {
-      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
+      expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( false )
     })
 
     it( 'should extract this as an image due to contours ', function() {
       testPath.contours.push( {} )
       testPath.contours.push( {} )
-      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
+      expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
 
     it( 'should extract this as an image due to fill name', function() {
       testPath.pathAttributes.fill = {}
       testPath.pathAttributes.fill.name = 'stripe'
-      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
+      expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
 
@@ -524,7 +529,7 @@ describe( 'Fib Export Object Tests!', function () {
       testPath.pathAttributes.fill = {}
       testPath.pathAttributes.fill.name = 'Solid'
       testPath.pathAttributes.fill.textureBlend = 1
-      expect( FibExtractor.shouldExtractVectorAsImage( testPath ))
+      expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
   })
@@ -536,9 +541,9 @@ describe( 'Fib Export Object Tests!', function () {
       testPath = new Path({ width: 20, height: 30, left: 40, top: 50 })
     })
 
-    it( 'should export a simple rectangle from a path', function() {
+    it( 'should extract a simple rectangle from a path', function() {
       testPath.name = 'type: view'
-      expect( FibExtractor.extract( testPath ))
+      expect( fibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
           opacity: 1,
@@ -553,8 +558,8 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a canvas view', function() {
-      expect( FibExtractor.extract( testPath ))
+    it( 'should extract a canvas view', function() {
+      expect( fibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
           opacity: 1,
@@ -567,10 +572,10 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export an image', function() {
+    it( 'should extract an image', function() {
       testPath.name = 'type: canvas'
       testPath.contours = [1, 1]
-      expect( FibExtractor.extract( testPath ))
+      expect( fibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
           width: 20,
@@ -582,7 +587,7 @@ describe( 'Fib Export Object Tests!', function () {
         })
     })
 
-    it( 'should export a canvas view with drawList', function() {
+    it( 'should extract a canvas view with drawList', function() {
       testPath.contours = [{
         isClosed: true,
         nodes: [
@@ -591,7 +596,7 @@ describe( 'Fib Export Object Tests!', function () {
           { x: 0, y: 1, predX: 2, predY: 3, succX: 4, succY: 5 }
         ]
       }]
-      expect( FibExtractor.extract( testPath ))
+      expect( fibExtractor.extract( testPath ))
         .toEqual({
           id: '__TestViewPath1',
           opacity: 1,
@@ -625,7 +630,7 @@ describe( 'Fib Export Object Tests!', function () {
   })
 
 
-  describe( 'Test the full exportObjects function', function () {
+  describe( 'Test the full extractObjects function', function () {
     var t1, t2, t3
     var t1Out, t2Out, t3Out
     var objs
@@ -683,7 +688,7 @@ describe( 'Fib Export Object Tests!', function () {
         top: 0,
         width: 0
       }
-      objs = FibExtractor.extractObjects([ t1, t2, t3 ])
+      objs = fibExtractor.extractObjects([ t1, t2, t3 ])
     })
 
     it( 'should have label t1', function () {

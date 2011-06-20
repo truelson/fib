@@ -2,20 +2,19 @@ fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
 var exportAll = function() {
 
-  var dom = fw.getDocumentDOM()
-  fw.saveDocument( dom )
+  var resourceDir = FibHelper.getResourceDir()
+  if ( typeof resourceDir === 'undefined' ) return false
 
-  if ( !FibHelper.getResourceDirs() ) return false
+  var dom = fw.getDocumentDOM()
 
   for( var i = 0; i < dom.pagesCount; i++ ) {
     dom.changeCurrentPage( i )
-    FibHelper.setCurrentDOM()
-    FibExporter.exportDOM( FibHelper.dom )
+    FibExporter.exportDOM( fw.getDocumentDOM(), resourceDir )
   }
 }
 
 try {
   exportAll()
 } catch(e) {
-  alert([ e.lineNumber, e.message ])
+  alert([ e.lineNumber, e.fileName, e.message ])
 }
