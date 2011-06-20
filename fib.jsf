@@ -1,6 +1,9 @@
 fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
 var exportPage = function() {
+
+  fw.saveDocument( fw.getDocumentDOM() )
+
   if ( !FibHelper.getResourceDirs() ) return false
 
   FibExporter.exportDOM( fw.getDocumentDOM() )
