@@ -6,6 +6,47 @@
  */
 describe('Fib Helper Tests!', function () {
 
+  describe('Exception Catching Function', function() {
+    it( 'should catch exception objects and alert with info', function() {
+      var oldAlert = alert
+      alert = createSpy()
+      var except = { lineNumber: 20, fileName: 'blah', message: 'ugh' }
+
+      FibHelper.catchException( except )
+      expect( alert ).toHaveBeenCalledWith( 'Fib script failed.\n'
+        + 'Line Number: ' + except.lineNumber + '\n'
+        + 'File Name: ' + except.fileName + '\n'
+        + 'Message: ' + except.message )
+
+      alert = oldAlert
+    })
+
+    it( 'should throw a different alert if not an object', function() {
+      var oldAlert = alert
+      alert = createSpy()
+      var except = 2478
+
+      FibHelper.catchException( except )
+      expect( alert ).toHaveBeenCalledWith(
+        'You likely did not choose a proper Resources directory.  '
+        + 'Otherwise Fireworks failed and offered only this as information:'
+        + except)
+
+      alert = oldAlert
+    })
+
+    it( 'should cleanup after if it can cleanup', function() {
+      var except = 2478
+
+      FibHelper.lastHelper = { cleanup: function() {} }
+      spyOn( FibHelper.lastHelper, 'cleanup' )
+
+      FibHelper.catchException( except )
+      expect( FibHelper.lastHelper.cleanup ).toHaveBeenCalled()
+    })
+    
+  })
+
   beforeEach(function() {
     fibHelper = require( '../lib/fib_helper' ).FibHelper
       .createFibHelper( fw.createDocument(), '~/TestView/' )
@@ -16,7 +57,7 @@ describe('Fib Helper Tests!', function () {
     fibHelper.cleanup()
   })
 
-  describe('Helper Function tests', function () {
+  describe('FibHelper object method tests', function () {
 
     it('should have a working object type function', function () {
       expect(fibHelper.objectType([])).toEqual('Array')
