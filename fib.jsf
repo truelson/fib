@@ -2,6 +2,7 @@ fw.runScript( fw.currentScriptDir + '/lib/lib.js' )
 
 try {
   FibExporter.exportPage()
-} catch(e) {
-  alert([ e, e.lineNumber, e.fileName, e.message ])
+} catch( exception ) {
+  if( FibHelper && FibHelper.catchException )
+    FibHelper.catchException( exception )
 }
