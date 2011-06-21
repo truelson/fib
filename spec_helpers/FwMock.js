@@ -205,7 +205,9 @@ fw.createDocument = function() {
 
     selectAll: function() {},
 
-    layers: [mockLayer]
+    layers: [mockLayer],
+
+    changeCurrentPage: function( pageIndex ) {}
   })
 }
 

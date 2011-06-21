@@ -17,7 +17,7 @@ describe( 'FibExporter Tests!', function () {
     })
   })
 
-  describe( 'Test the full export function', function () {
+  describe( 'Test the exportDOM function', function () {
 
     var files, cSpy, oSpy, wSpy, clSpy, utf8Spy
 
@@ -63,6 +63,53 @@ describe( 'FibExporter Tests!', function () {
       expect( cSpy )
         .toHaveBeenCalledWith( '~/TestDir/json/TestView.json',
           'json', 'FWMX' )
+    })
+  })
+
+  describe('Testing exportPage/exportAll.', function() {
+
+    beforeEach( function() {
+      spyOn( FibExporter, 'exportDOM' )
+    })
+
+    describe('The exportPage function', function() {
+
+      it( 'should call getResourceDir', function() {
+        spyOn( FibHelper, 'getResourceDir' )
+        FibExporter.exportPage()
+        expect( FibHelper.getResourceDir ).toHaveBeenCalled()
+      })
+
+      it( 'should call exportDOM once', function() {
+        FibExporter.exportPage()
+        expect( FibExporter.exportDOM.callCount).toEqual( 1 )
+      })
+
+      it( 'should return false if getResourceDir fails', function() {
+        spyOn( FibHelper, 'getResourceDir' ).andReturn( undefined )
+        expect( FibExporter.exportPage() ).toEqual( false )
+      })
+
+    })
+
+    describe('The exportAll function', function() {
+
+      it( 'should call getResourceDir', function() {
+        spyOn( FibHelper, 'getResourceDir' )
+        FibExporter.exportAll()
+        expect( FibHelper.getResourceDir ).toHaveBeenCalled()
+      })
+
+      it( 'should call exportDOM four times', function() {
+        fw._mockDOM.pagesCount = 4
+        FibExporter.exportAll()
+        expect( FibExporter.exportDOM.callCount).toEqual( 4 )
+      })
+
+      it( 'should return false if getResourceDir fails', function() {
+        spyOn( FibHelper, 'getResourceDir' ).andReturn( undefined )
+        expect( FibExporter.exportAll() ).toEqual( false )
+      })
     })
   })
 })
