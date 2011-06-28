@@ -43,6 +43,14 @@ describe( 'Fib Extract Object Tests!', function () {
         .toEqual( 'asdf' )
     })
 
+    it( 'should not extract degenerate IDs', function () {
+      mockImage.name = 'type:image, id:asdf'
+      mockImage2.name = 'type:image, id:asdf'
+
+      var objects = fibExtractor.extractObjects([ mockImage, mockImage2 ])
+      expect( objects[0].id ).toEqual( '__TestViewImage1' )
+    })
+
     it( 'should replace spaces with underscores', function () {
       mockImage.name = 'Control Town'
       expect( fibExtractor.extractObjects([ mockImage ])[0].id )
