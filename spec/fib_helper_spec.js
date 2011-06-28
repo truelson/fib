@@ -1,4 +1,4 @@
-/* File: fib.spec.js
+/* File: fib_helper_spec.js
  * Authors: Palmer Truelson
  * Company: Massive Health, LLC
  * Licence: $LICENSE
@@ -47,17 +47,75 @@ describe('Fib Helper Tests!', function () {
     
   })
 
-  beforeEach(function() {
-    fibHelper = require( '../lib/fib_helper' ).FibHelper
-      .createFibHelper( fw.createDocument(), '~/TestView/' )
-    fw.selection = []
-  })
+  describe('OutputWarning Function', function() {
 
-  afterEach(function() {
-    fibHelper.cleanup()
+    var oldAlert, fibHelper
+
+    beforeEach( function() {
+      spyOn( Files, 'createFile' )
+      spyOn( fw._mockFile, 'writeUTF8' )
+      oldAlert = alert
+      alert = createSpy()
+
+    })
+
+    afterEach( function() {
+      alert = oldAlert
+    })
+
+    describe( 'output tests', function() {
+
+      beforeEach( function() {
+        fibHelper = require( '../lib/fib_helper' ).FibHelper
+          .createFibHelper( fw.createDocument(), '~/TestView/', false )
+      })
+
+      it( 'should output warnings', function() {
+        fibHelper.addWarning( 'blah' )
+        fibHelper.outputWarnings()
+
+        expect( Files.createFile ).toHaveBeenCalled()
+        expect( fw._mockFile.writeUTF8 ).toHaveBeenCalledWith( 'blah' )
+      })
+
+      it( 'should not output anything', function() {
+        fibHelper.outputWarnings()
+        expect( Files.createFile ).not.toHaveBeenCalled()
+        expect( fw._mockFile.writeUTF8 ).not.toHaveBeenCalled()
+      })
+    })
+
+    it( 'should not call alert', function() {
+      fibHelper = require( '../lib/fib_helper' ).FibHelper
+        .createFibHelper( fw.createDocument(), '~/TestView/', false )
+      fibHelper.addWarning( 'blah' )
+      fibHelper.outputWarnings()
+
+      expect( alert ).not.toHaveBeenCalled()
+    })
+
+    it( 'should call alert', function() {
+      fibHelper = require( '../lib/fib_helper' ).FibHelper
+        .createFibHelper( fw.createDocument(), '~/TestView/', true )
+      fibHelper.addWarning( 'blah' )
+      fibHelper.outputWarnings()
+
+      expect( alert ).toHaveBeenCalled()
+    })
+
   })
 
   describe('FibHelper object method tests', function () {
+
+    beforeEach(function() {
+      fibHelper = require( '../lib/fib_helper' ).FibHelper
+        .createFibHelper( fw.createDocument(), '~/TestView/', false )
+      fw.selection = []
+    })
+
+    afterEach(function() {
+      fibHelper.cleanup()
+    })
 
     it('should have a working object type function', function () {
       expect(fibHelper.objectType([])).toEqual('Array')

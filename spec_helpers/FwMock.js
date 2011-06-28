@@ -237,6 +237,7 @@ Files.createDirectory = function (name) {}
 Files.deleteFileIfExisting = function (name) {}
 Files.makePathFromDirAndFile = function (dir, name) { return dir + name }
 
+Files.exists = function ( path ) {}
 Files.open = function (path, canWrite) {
   fw._mockFile.mockPath = path
   fw._mockFile.canWrite = (canWrite || false)
