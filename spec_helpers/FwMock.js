@@ -235,6 +235,7 @@ exports.Files = Files
 Files.createFile = function (name, type, from) {}
 Files.createDirectory = function (name) {}
 Files.deleteFileIfExisting = function (name) {}
+Files.makePathFromDirAndFile = function (dir, name) { return dir + name }
 
 Files.open = function (path, canWrite) {
   fw._mockFile.mockPath = path
