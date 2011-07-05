@@ -23,7 +23,7 @@ try {
     FibHelper.catchException( exception )
 }
 
-// This is here instead of fw.quit as fw.quit simply doesn't work!
+// This is here instead of fw.quit as fw.quit simply does not work!
 // we use a tmp file as a flag to let the script know when fireworks is done
 Files.deleteFileIfExisting("file:///${VOLUME_NAME}${FIB_TEMP_FLAG}")
 
@@ -40,7 +40,7 @@ rm -rf ${FIB_WARNINGS_DIR}/*_warnings.txt
 open -ga "Adobe Fireworks CS5" $FIB_TEMP_COMMAND
 
 # HACK: wait for temp file to be gone before continuing
-# can't use open -W as no easy way to close a new instance of Fireworks
+# cannot use open -W as no easy way to close a new instance of Fireworks
 # from within fireworks
 while true
 do
