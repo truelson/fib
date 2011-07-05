@@ -1,0 +1,66 @@
+#!/bin/sh
+
+#FIB_TEMP_COMMAND=${TMPDIR}${$}-fireworks.jsf
+FIB_TEMP_DIR=/var/tmp/
+FIB_TEMP_COMMAND=${FIB_TEMP_DIR}${$}-fireworks.jsf
+FIB_TEMP_FLAG=${FIB_TEMP_DIR}ttest
+FIB_WARNINGS_DIR=${2}/warnings
+VOLUME_NAME=Macintosh%20HD
+
+if [ $# -ne 2 ]
+then
+  echo "Usage: $0 <path-to-png> <path-to-project-dir>"
+  exit 1
+fi
+
+echo $1
+
+echo $FIB_TEMP_COMMAND
+echo ${VOLUME_NAME}${2}/Resources/
+cat > $FIB_TEMP_COMMAND << EOF
+
+
+try {
+  fw.runScript( fw.userJsCommandsDir + '/lib/lib.js' )
+  FibExporter.exportCommandLine( "file:///${VOLUME_NAME}${1}", "file:///${VOLUME_NAME}${2}/Resources/" )
+} catch( exception ) {
+  if( FibHelper && FibHelper.catchException )
+    FibHelper.catchException( exception )
+}
+
+// This is here instead of fw.quit as fw.quit simply doesn't work!
+// we use a tmp file as a flag to let the script know when fireworks is done
+Files.deleteFileIfExisting("file:///${VOLUME_NAME}${FIB_TEMP_FLAG}")
+
+EOF
+
+# Setup
+touch $FIB_TEMP_FLAG
+if [ ! -d $FIB_WARNINGS_DIR ]; then
+    mkdir $FIB_WARNINGS_DIR
+fi
+
+rm -rf ${FIB_WARNINGS_DIR}/*_warnings.txt
+
+open -ga "Adobe Fireworks CS5" $FIB_TEMP_COMMAND
+
+# HACK: wait for temp file to be gone before continuing
+# can't use open -W as no easy way to close a new instance of Fireworks
+# from within fireworks
+while true
+do
+    [ ! -f ${FIB_TEMP_FLAG} ] && break
+    sleep 2
+done
+
+echo "Finished Exporting from Adobe Fireworks"
+
+# We need means to stdout warnings that are saved to file...
+for WARNING_FILE in ${FIB_WARNINGS_DIR}/*.txt
+do
+    strings $WARNING_FILE
+    echo "\n"
+done
+
+rm -rf $FIB_TEMP_COMMAND
+
