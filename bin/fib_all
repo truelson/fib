@@ -3,22 +3,17 @@
 #FIB_TEMP_COMMAND=${TMPDIR}${$}-fireworks.jsf
 FIB_TEMP_DIR=/var/tmp/
 FIB_TEMP_COMMAND=${FIB_TEMP_DIR}${$}-fireworks.jsf
-FIB_TEMP_FLAG=${FIB_TEMP_DIR}ttest
+FIB_TEMP_FLAG=${FIB_TEMP_DIR}fib_is_running
 FIB_WARNINGS_DIR=${2}/warnings
 VOLUME_NAME=Macintosh%20HD
 
 if [ $# -ne 2 ]
 then
-  echo "Usage: $0 <path-to-png> <path-to-project-dir>"
+  echo "Usage: $0 <full-path-to-png> <full-path-to-project-dir>"
   exit 1
 fi
 
-echo $1
-
-echo $FIB_TEMP_COMMAND
-echo ${VOLUME_NAME}${2}/Resources/
 cat > $FIB_TEMP_COMMAND << EOF
-
 
 try {
   fw.runScript( fw.userJsCommandsDir + '/lib/lib.js' )
