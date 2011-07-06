@@ -48,6 +48,11 @@ do
     sleep 2
 done
 
+# kill all fireworks if none were running beforehand
+if [  $( wc -w <<<$PREVIOUSLY_RUNNING_FIREWORKS ) -eq 0 ]; then
+    killall "Adobe Fireworks CS5"
+fi
+
 echo "\nFinished Exporting from Adobe Fireworks\n"
 
 # cleanup our old command
@@ -69,5 +74,3 @@ do
     strings $WARNING_FILE
     echo "\n"
 done
-
-
