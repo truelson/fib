@@ -6,9 +6,9 @@ FIB_TEMP_COMMAND=${FIB_TEMP_DIR}${$}-fireworks.jsf
 FIB_TEMP_FLAG=${FIB_TEMP_DIR}fib_is_running
 FIB_WARNINGS_DIR=${2}/warnings
 VOLUME_NAME=Macintosh%20HD
+PREVIOUSLY_RUNNING_FIREWORKS=$( ps axco pid,command | grep "Adobe Fireworks" | awk '{ print $1 }' )
 
-if [ $# -ne 2 ]
-then
+if [ $# -ne 2 ]; then
   echo "Usage: $0 <full-path-to-png> <full-path-to-project-dir>"
   exit 1
 fi
@@ -26,7 +26,6 @@ try {
 // This is here instead of fw.quit as fw.quit simply does not work!
 // we use a tmp file as a flag to let the script know when fireworks is done
 Files.deleteFileIfExisting("file:///${VOLUME_NAME}${FIB_TEMP_FLAG}")
-fw.quit()
 
 EOF
 
