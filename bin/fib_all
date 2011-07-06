@@ -26,6 +26,7 @@ try {
 // This is here instead of fw.quit as fw.quit simply does not work!
 // we use a tmp file as a flag to let the script know when fireworks is done
 Files.deleteFileIfExisting("file:///${VOLUME_NAME}${FIB_TEMP_FLAG}")
+fw.quit()
 
 EOF
 
@@ -41,21 +42,33 @@ open -ga "Adobe Fireworks CS5" $FIB_TEMP_COMMAND
 
 # HACK: wait for temp file to be gone before continuing
 # cannot use open -W as no easy way to close a new instance of Fireworks
-# from within fireworks
+# from within Fireworks
 while true
 do
     [ ! -f ${FIB_TEMP_FLAG} ] && break
     sleep 2
 done
 
-echo "Finished Exporting from Adobe Fireworks"
+echo "\nFinished Exporting from Adobe Fireworks\n"
 
-# We need means to stdout warnings that are saved to file...
-for WARNING_FILE in ${FIB_WARNINGS_DIR}/*.txt
+# cleanup our old command
+rm -rf $FIB_TEMP_COMMAND
+
+# early out if warnings directory is empty
+if [ ! "$(ls -A ${FIB_WARNINGS_DIR})" ]; then
+   echo "No warnings.\n"
+   exit
+fi
+
+# stdout warnings that are saved to file...
+echo "Warnings:\n"
+for WARNING_FILE in ${FIB_WARNINGS_DIR}/*
 do
+    # using strings here because it linebreaks the ^M character
+    FILE_NAME=$(basename $WARNING_FILE):
+    echo ${FILE_NAME%_warnings.*}" warnings:\n"
     strings $WARNING_FILE
     echo "\n"
 done
 
-rm -rf $FIB_TEMP_COMMAND
 
