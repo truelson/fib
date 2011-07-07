@@ -1,23 +1,48 @@
 #!/bin/sh
 
-#FIB_TEMP_COMMAND=${TMPDIR}${$}-fireworks.jsf
+# This function gets the full, absolute path for a file
+# modified from: http://stackoverflow.com/questions/1055671/how-can-i-get-the-behavior-of-gnus-readlink-f-on-a-mac
+function full_path {
+    TARGET_FILE=$1
+
+    cd `dirname $TARGET_FILE`
+    TARGET_FILE=`basename $TARGET_FILE`
+
+    # Compute the canonicalized name by finding the physical path
+    # for the directory we're in and appending the target file.
+    PHYS_DIR=`pwd -P`
+    RESULT=$PHYS_DIR/$TARGET_FILE
+    echo $RESULT
+}
+
 FIB_TEMP_DIR=/var/tmp/
 FIB_TEMP_COMMAND=${FIB_TEMP_DIR}${$}-fireworks.jsf
 FIB_TEMP_FLAG=${FIB_TEMP_DIR}fib_is_running
 FIB_WARNINGS_DIR=${2}/warnings
-VOLUME_NAME=Macintosh%20HD
 PREVIOUSLY_RUNNING_FIREWORKS=$( ps axco pid,command | grep "Adobe Fireworks" | awk '{ print $1 }' )
 
+# Adobe Fireworks needs a full URL path of the file name including
+# a URL escaped volume name to work.  So here, we get the root directory's
+# URL escaped volume name.  Yes, I'm using perl.
+VOLUME_NAME_UNESCAPED="$( basename "$( find /Volumes -lname / )" )"
+VOLUME_NAME="$( perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "${VOLUME_NAME_UNESCAPED}" )"
+
+# Exit out if they don't have 2 arguments
 if [ $# -ne 2 ]; then
   echo "Usage: $0 <full-path-to-png> <full-path-to-project-dir>"
   exit 1
 fi
 
+# get the full unix path for the two arguments
+FULL_PATH_TO_PNG="$( full_path $1 )"
+FULL_PATH_TO_PROJECT="$( full_path $2 )"
+
+# Save an adobe script to disk with the resource names inside the script
 cat > $FIB_TEMP_COMMAND << EOF
 
 try {
   fw.runScript( fw.userJsCommandsDir + '/lib/lib.js' )
-  FibExporter.exportCommandLine( "file:///${VOLUME_NAME}${1}", "file:///${VOLUME_NAME}${2}/Resources/" )
+  FibExporter.exportCommandLine( "file:///${VOLUME_NAME}${FULL_PATH_TO_PNG}", "file:///${VOLUME_NAME}${FULL_PATH_TO_PROJECT}/Resources/" )
 } catch( exception ) {
   if( FibHelper && FibHelper.catchException )
     FibHelper.catchException( exception )
@@ -29,14 +54,16 @@ Files.deleteFileIfExisting("file:///${VOLUME_NAME}${FIB_TEMP_FLAG}")
 
 EOF
 
-# Setup
+# touch the temp flag to let it know you're starting
 touch $FIB_TEMP_FLAG
 if [ ! -d $FIB_WARNINGS_DIR ]; then
     mkdir $FIB_WARNINGS_DIR
 fi
 
+# delete all previous warnings
 rm -rf ${FIB_WARNINGS_DIR}/*_warnings.txt
 
+# run fireworks
 open -ga "Adobe Fireworks CS5" $FIB_TEMP_COMMAND
 
 # HACK: wait for temp file to be gone before continuing
