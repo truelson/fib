@@ -80,15 +80,18 @@ if [  $( wc -w <<<$PREVIOUSLY_RUNNING_FIREWORKS ) -eq 0 ]; then
     killall "Adobe Fireworks CS5"
 fi
 
-echo "\nFinished Exporting from Adobe Fireworks\n"
+# mark in build directory when this build has been exported
+PNG_NAME="$( basename $FULL_PATH_TO_PNG )"
+PNG_NAME="${PNG_NAME%.png}"
+
+touch ${FULL_PATH_TO_PROJECT}/art/${PNG_NAME}.exported
 
 # cleanup our old command
 rm -rf $FIB_TEMP_COMMAND
 
 # early out if warnings directory is empty
 if [ ! "$(ls -A ${FIB_WARNINGS_DIR})" ]; then
-   echo "No warnings.\n"
-   exit
+   exit 0
 fi
 
 # stdout warnings that are saved to file...
@@ -101,3 +104,5 @@ do
     strings $WARNING_FILE
     echo "\n"
 done
+
+exit 1
