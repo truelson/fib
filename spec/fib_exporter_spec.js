@@ -27,7 +27,7 @@ describe( 'FibExporter Tests!', function () {
       utf8Spy = spyOn( fw._mockFile, 'writeUTF8' )
       wSpy = spyOn( fw._mockFile, 'write' )
       clSpy = spyOn( fw._mockFile, 'close' )
-      fw._mockDOM.topLayers = [ new Text({ name: 'BigTest' })]
+      fw._mockDOM.topLayers = [ new Text({ name: 'id:BigTest' })]
       FibExporter.exportDOM( fw.getDocumentDOM(), '~/TestDir/' )
     })
 

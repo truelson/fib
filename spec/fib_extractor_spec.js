@@ -31,10 +31,10 @@ describe( 'Fib Extract Object Tests!', function () {
         not.toEqual( undefined )
     })
 
-    it( 'should use name if exists without metaData', function () {
+    it( 'should use unique name if exists without metaData', function () {
       mockImage.name = 'fdsa'
       expect( fibExtractor.extractObjects([ mockImage ])[0].id )
-        .toEqual( 'fdsa' )
+        .toEqual( '__TestViewImage1' )
     })
 
     it( 'should use meta data id if there', function () {
@@ -51,10 +51,10 @@ describe( 'Fib Extract Object Tests!', function () {
       expect( objects[0].id ).toEqual( '__TestViewImage1' )
     })
 
-    it( 'should replace spaces with underscores', function () {
-      mockImage.name = 'Control Town'
+    it( 'should contract spaces', function () {
+      mockImage.name = 'id:Control Town'
       expect( fibExtractor.extractObjects([ mockImage ])[0].id )
-        .toEqual( 'Control_Town' )
+        .toEqual( 'ControlTown' )
     })
   })
 
@@ -644,7 +644,7 @@ describe( 'Fib Extract Object Tests!', function () {
     var objs
 
     beforeEach( function() {
-      t1 = new Text({ name: 't1' })
+      t1 = new Text({ name: 'id:t1' })
       t1Out = {
         color: '#ff0000',
         font: {
@@ -662,7 +662,7 @@ describe( 'Fib Extract Object Tests!', function () {
         width: 0
       }
 
-      t2 = new Text({ name: 't2' })
+      t2 = new Text({ name: 'id:t2' })
       t2Out = {
         color: '#ff0000',
         font: {
@@ -679,7 +679,7 @@ describe( 'Fib Extract Object Tests!', function () {
         top: 0,
         width: 0
       }
-      t3 = new Text({ name: 't3' })
+      t3 = new Text({ name: 'id:t3' })
       t3Out = {
         color: '#ff0000',
         font: {

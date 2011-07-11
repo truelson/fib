@@ -166,7 +166,7 @@ describe('Fib Helper Tests!', function () {
       })
 
       it( 'should return empty object if no colon anywhere', function () {
-        expect( fibHelper.parseMetadata( 'asdf' )).toEqual({ id: 'asdf' })
+        expect( fibHelper.parseMetadata( 'asdf' )).toEqual({ })
       })
 
       it( 'should return an object with a button type', function () {
