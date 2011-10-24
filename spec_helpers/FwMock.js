@@ -88,6 +88,10 @@ var RectanglePrimitive = function (spec) {
   this.roundness = 0
   this.pathAttributes = {
     fillColor: '#ff0000',
+    fill: {
+      name: 'Solid',
+      textureBlend: 0
+    },
     brushColor: '#00ff00',
     brush: { diameter: 1 }
   }

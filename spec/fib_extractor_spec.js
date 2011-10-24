@@ -117,7 +117,8 @@ describe( 'Fib Extract Object Tests!', function () {
           opacity: 1,
           borderWidth: 1,
           borderColor: '#00ff00',
-          borderRadius: 0
+          borderRadius: 0,
+          backgroundColor: '#ff0000'
         })
     })
 
@@ -134,7 +135,8 @@ describe( 'Fib Extract Object Tests!', function () {
           type: 'view',
           borderWidth: 1,
           borderColor: '#00ff00',
-          borderRadius: 0
+          borderRadius: 0,
+          backgroundColor: '#ff0000'
         })
     })
 
@@ -152,7 +154,8 @@ describe( 'Fib Extract Object Tests!', function () {
           type: 'view',
           borderWidth: 1,
           borderColor: '#00ff00',
-          borderRadius: 0
+          borderRadius: 0,
+          backgroundColor: '#ff0000'
         })
     })
 

@@ -264,6 +264,7 @@ describe('Fib Helper Tests!', function () {
       it( 'should not use pixel rect size if no fill or brush', function() {
         test_rect.pixelRect = pixel_rect_big
         test_rect.pathAttributes.brush = null
+        test_rect.pathAttributes.fill = null
         expect(fibHelper.getActualSize(test_rect)).toBeSameSizeAs(test_obj)
       })
 
