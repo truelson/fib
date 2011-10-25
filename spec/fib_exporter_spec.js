@@ -39,6 +39,8 @@ describe( 'FibExporter Tests!', function () {
       // as well.  Editing this string ain't fun
       expect( utf8Spy ).toHaveBeenCalledWith(
         dojo.toJson([{
+          left: 0,
+          top: 0,
           width: 320,
           height: 460,
           backgroundColor: "#ffffff",
@@ -71,6 +73,16 @@ describe( 'FibExporter Tests!', function () {
   })
 
   describe('The createRootView function', function() {
+
+    it( 'export at 0 left', function() {
+      var view = FibExporter.createRootView( fw.getDocumentDOM() )
+      expect( view.left ).toEqual( 0 );
+    });
+
+    it( 'export at 0 top ', function() {
+      var view = FibExporter.createRootView( fw.getDocumentDOM() )
+      expect( view.top ).toEqual( 0 );
+    });
 
     it( 'export a 320 width view', function() {
       var view = FibExporter.createRootView( fw.getDocumentDOM() )
