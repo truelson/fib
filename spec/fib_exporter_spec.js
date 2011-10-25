@@ -59,7 +59,7 @@ describe( 'FibExporter Tests!', function () {
             "font":{"fontFamily":"","fontSize":0 },
             "text":""
           }]
-        }], true, '  ' ))
+        }], false, '' ))
     })
 
     it( 'should never call the write command', function() {
