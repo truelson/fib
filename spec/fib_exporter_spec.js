@@ -39,13 +39,14 @@ describe( 'FibExporter Tests!', function () {
       // as well.  Editing this string ain't fun
       expect( utf8Spy ).toHaveBeenCalledWith(
         dojo.toJson([{
-          left: 0,
-          top: 0,
-          width: 320,
-          height: 460,
-          backgroundColor: "#ffffff",
-          type: "view",
-          children: [{
+          "left": 0,
+          "top": 0,
+          "width": 320,
+          "height": 460,
+          "backgroundColor": "#ffffff",
+          "id": "__TestView_root_view",
+          "type": "view",
+          "children": [{
             "left": 0,
             "top": 0,
             "height": 0,
@@ -73,31 +74,34 @@ describe( 'FibExporter Tests!', function () {
   })
 
   describe('The createRootView function', function() {
+    var fibHelper, view
+
+    beforeEach( function() {
+      fibHelper = FibHelper.createFibHelper( fw.getDocumentDOM(),
+        'test', false )
+      view = FibExporter.createRootView( fw.getDocumentDOM(),
+        fibHelper )
+    })
 
     it( 'export at 0 left', function() {
-      var view = FibExporter.createRootView( fw.getDocumentDOM() )
       expect( view.left ).toEqual( 0 );
-    });
+    })
 
     it( 'export at 0 top ', function() {
-      var view = FibExporter.createRootView( fw.getDocumentDOM() )
       expect( view.top ).toEqual( 0 );
-    });
+    })
 
     it( 'export a 320 width view', function() {
-      var view = FibExporter.createRootView( fw.getDocumentDOM() )
       expect( view.width ).toEqual( 320 );
-    });
+    })
 
     it( 'export a 460 height view', function() {
-      var view = FibExporter.createRootView( fw.getDocumentDOM() )
       expect( view.height ).toEqual( 460 );
-    });
+    })
 
     it( 'export a white background', function() {
-      var view = FibExporter.createRootView( fw.getDocumentDOM() )
       expect( view.backgroundColor ).toEqual( '#ffffff' );
-    });
+    })
 
   });
 
