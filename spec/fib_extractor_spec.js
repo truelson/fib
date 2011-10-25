@@ -543,6 +543,14 @@ describe( 'Fib Extract Object Tests!', function () {
       expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( true )
     })
+
+    it( 'should not extract this as an image due to fill ', function() {
+      testPath.pathAttributes.fill = {}
+      testPath.pathAttributes.fill.name = 'fc_Normal'
+      testPath.pathAttributes.fill.shape = 'Solid'
+      expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
+        .toEqual( false )
+    })
   })
 
   describe( 'Extract Path Function', function() {
