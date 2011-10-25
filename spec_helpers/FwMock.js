@@ -158,7 +158,7 @@ exports.Text = Text
 fw._resetMockDom = function(d) {
   d.pageName = 'TestView'
   d.width = 320
-  d.height = 480
+  d.height = 460
   d.backgroundColor = '#ffffff'
   d.exportOptions = {
     colorMode: '32 bit'

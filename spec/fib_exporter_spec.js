@@ -38,8 +38,12 @@ describe( 'FibExporter Tests!', function () {
       // might want to change this test and serialize an object here
       // as well.  Editing this string ain't fun
       expect( utf8Spy ).toHaveBeenCalledWith(
-        dojo.toJson([
-          {
+        dojo.toJson([{
+          width: 320,
+          height: 460,
+          backgroundColor: "#ffffff",
+          type: "view",
+          children: [{
             "left": 0,
             "top": 0,
             "height": 0,
@@ -51,8 +55,8 @@ describe( 'FibExporter Tests!', function () {
             "color":"#ff0000",
             "font":{"fontFamily":"","fontSize":0 },
             "text":""
-          }
-        ], true, '  ' ))
+          }]
+        }], true, '  ' ))
     })
 
     it( 'should never call the write command', function() {
@@ -65,6 +69,25 @@ describe( 'FibExporter Tests!', function () {
           'json', 'FWMX' )
     })
   })
+
+  describe('The createRootView function', function() {
+
+    it( 'export a 320 width view', function() {
+      var view = FibExporter.createRootView( fw.getDocumentDOM() )
+      expect( view.width ).toEqual( 320 );
+    });
+
+    it( 'export a 460 height view', function() {
+      var view = FibExporter.createRootView( fw.getDocumentDOM() )
+      expect( view.height ).toEqual( 460 );
+    });
+
+    it( 'export a white background', function() {
+      var view = FibExporter.createRootView( fw.getDocumentDOM() )
+      expect( view.backgroundColor ).toEqual( '#ffffff' );
+    });
+
+  });
 
   describe('Testing exportPage/exportAll.', function() {
 
@@ -91,7 +114,7 @@ describe( 'FibExporter Tests!', function () {
       })
 
     })
-
+    
     describe('The exportAll function', function() {
 
       it( 'should call getResourceDir', function() {
