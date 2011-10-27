@@ -146,6 +146,11 @@ var Text = function (spec) {
   this.name = null
   this.textChars = ''
 
+  this.rawLeft = this.left;
+  this.rawTop = this.top;
+  this.rawWidth = this.width;
+  this.rawHeight = this.height;
+
   if(spec) {
     _.extend(this, spec)
   }

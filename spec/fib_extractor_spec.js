@@ -375,7 +375,7 @@ describe( 'Fib Extract Object Tests!', function () {
       testGroup.top = 20
       testGroup.left = 10
       testGroup.elements = []
-      testGroup.elements.push( new Text({ top: 30, left: 40 }))
+      testGroup.elements.push( new Text({ top: 30, left: 40, rawTop: 30, rawLeft: 40 }))
 
       var newGroup = fibExtractor.extract( testGroup )
       expect( newGroup.children[0].top ).toEqual( 10 )
@@ -398,7 +398,8 @@ describe( 'Fib Extract Object Tests!', function () {
     var testText
 
     beforeEach( function() {
-      testText = new Text({ width: 20, height: 30, left: 40, top: 50 })
+      testText = new Text({ width: 20, height: 30, left: 40, top: 50,
+        rawLeft: 41, rawTop: 51, rawWidth: 18, rawHeight: 28 })
     })
 
     it( 'should extract text as a label', function() {
@@ -407,7 +408,7 @@ describe( 'Fib Extract Object Tests!', function () {
           id: '__TestViewText1',
           opacity: 1,
           width: 20,
-          height: 30,
+          height: 28,
           left: 40,
           top: 50,
           type: 'label',
@@ -428,7 +429,7 @@ describe( 'Fib Extract Object Tests!', function () {
           id: '__TestViewText1',
           opacity: 1,
           width: 20,
-          height: 30,
+          height: 28,
           left: 40,
           top: 50,
           type: 'label',
