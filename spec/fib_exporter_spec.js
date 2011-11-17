@@ -105,6 +105,22 @@ describe( 'FibExporter Tests!', function () {
 
   });
 
+  describe('The createRootView function scroll view test', function() {
+    var fibHelper, view
+
+    beforeEach( function() {
+      fw._mockDOM.height = 481
+      fibHelper = FibHelper.createFibHelper( fw.getDocumentDOM(),
+        'test', false )
+      view = FibExporter.createRootView( fw.getDocumentDOM(),
+        fibHelper )
+    })
+
+    it( 'export a scroll view', function() {
+      expect( view.type ).toEqual( 'scroll' );
+    })
+  })
+
   describe('Testing exportPage/exportAll.', function() {
 
     beforeEach( function() {
