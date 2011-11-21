@@ -102,7 +102,9 @@ describe( 'Fib Extract Object Tests!', function () {
 
     beforeEach( function() {
       testRectangle = new RectanglePrimitive(
-        { name:'type:view', width: 20, height: 30, left: 40, top: 50 })
+        { name:'type:view', width: 20, height: 30, left: 40, top: 50,
+          roundness: 23
+        })
     })
 
     it( 'should extract a rectangle primitive type as view', function() {
@@ -117,8 +119,9 @@ describe( 'Fib Extract Object Tests!', function () {
           opacity: 1,
           borderWidth: 1,
           borderColor: '#00ff00',
-          borderRadius: 0,
-          backgroundColor: '#ff0000'
+          borderRadius: 23,
+          backgroundColor: '#ff0000',
+          cornerRadius: 23
         })
     })
 
@@ -135,8 +138,9 @@ describe( 'Fib Extract Object Tests!', function () {
           type: 'view',
           borderWidth: 1,
           borderColor: '#00ff00',
-          borderRadius: 0,
-          backgroundColor: '#ff0000'
+          borderRadius: 23,
+          backgroundColor: '#ff0000',
+          cornerRadius: 23
         })
     })
 
@@ -154,8 +158,9 @@ describe( 'Fib Extract Object Tests!', function () {
           type: 'view',
           borderWidth: 1,
           borderColor: '#00ff00',
-          borderRadius: 0,
-          backgroundColor: '#ff0000'
+          borderRadius: 23,
+          backgroundColor: '#ff0000',
+          cornerRadius: 23
         })
     })
 
