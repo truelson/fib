@@ -376,6 +376,34 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
+    it( 'should extract a scroll group with children', function() {
+      testGroup = new Group({ name: 'id:scroll_group, type:scroll',
+        width: 20, height: 30, left: 40, top: 50 })
+      testGroup.elements = []
+      testGroup.elements.push( new Group({ left: 40, top: 50, width: 10,
+        height: 10, name: 'id:testyChildGroup' }))
+      expect( fibExtractor.extract( testGroup ))
+        .toEqual({
+          id: 'scroll_group',
+          opacity: 1,
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'scroll',
+          children: [{
+            id: 'testyChildGroup',
+            top: 0,
+            left: 0,
+            width: 10,
+            height: 10,
+            opacity: 1,
+            type: 'view',
+            children: []
+          }]
+        })
+    })
+
     it( 'should extract a group as a view with child offset', function() {
       testGroup.top = 20
       testGroup.left = 10
