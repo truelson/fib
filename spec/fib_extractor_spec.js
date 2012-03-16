@@ -193,8 +193,8 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
-    it( 'should extract only an image file if a free_image', function() {
-      testRectangle.name = 'id: testObject, type: free_image'
+    it( 'should extract only an image file if a freeImage', function() {
+      testRectangle.name = 'id: testObject, type: freeImage'
       spyOn( fibHelper, 'exportPNG' )
       expect( fibExtractor.extract( testRectangle )).toEqual( null )
       expect( fibHelper.exportPNG ).toHaveBeenCalledWith( testRectangle,
@@ -350,7 +350,7 @@ describe( 'Fib Extract Object Tests!', function () {
     })
 
     it( 'should not have a null from a free image', function() {
-      testLayer.elems.push( new Group({ name: 'type:free_image' }))
+      testLayer.elems.push( new Group({ name: 'type:freeImage' }))
       expect( fibExtractor.extract( testLayer ).length ).toEqual( 2 )
     })
   })
