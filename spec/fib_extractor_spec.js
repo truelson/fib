@@ -164,6 +164,22 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
+    it( 'should extract a rectangle told that it is a table', function() {
+      testRectangle.name = 'id: testObject, type: table'
+
+      expect( fibExtractor.extract( testRectangle ))
+        .toEqual({
+          id: 'testObject',
+          opacity: 1,
+          width: 20,
+          height: 30,
+          backgroundColor:'#ff0000',
+          left: 40,
+          top: 50,
+          type: 'table'
+        })
+    })
+
     it( 'should extract a rectangle told that it is an image', function() {
       testRectangle.name = 'id: testObject, type: image'
       expect( fibExtractor.extract( testRectangle ))
