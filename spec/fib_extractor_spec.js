@@ -239,6 +239,11 @@ describe( 'Fib Extract Object Tests!', function () {
         'testObject' )
     })
 
+    it( 'should extract nothing from a dummy object', function() {
+      testRectangle.name = 'id: testObject, type: dummy'
+      expect( fibExtractor.extract( testRectangle )).toEqual( null )
+    })
+
     it( 'should extract a button', function() {
       testRectangle.name = 'id: testObject, type: button'
       expect( fibExtractor.extract( testRectangle )).toEqual({
