@@ -621,6 +621,16 @@ describe( 'Fib Extract Object Tests!', function () {
         .toEqual( true )
     })
 
+    it( 'should extract this as an image due to effect', function() {
+      testPath.pathAttributes.fill = {}
+      testPath.pathAttributes.fill.name = 'Solid'
+      testPath.pathAttributes.fill.shape = 'solid'
+      testPath.effectList = {  category: 'UNUSED', effects:[{}]}
+
+      expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
+        .toEqual( true )
+    })
+
     it( 'should not extract this as an image due to fill ', function() {
       testPath.pathAttributes.fill = {}
       testPath.pathAttributes.fill.name = 'fc_Normal'
@@ -628,6 +638,7 @@ describe( 'Fib Extract Object Tests!', function () {
       expect( fibExtractor.shouldExtractVectorAsImage( testPath ))
         .toEqual( false )
     })
+
   })
 
   describe( 'Extract Path Function', function() {
