@@ -166,6 +166,10 @@ describe( 'Fib Extract Object Tests!', function () {
 
     it( 'should extract a rectangle told that it is a table', function() {
       testRectangle.name = 'id: testObject, type: table'
+      delete testRectangle.backgroundColor
+      testRectangle.pathAttributes = {}
+      testRectangle.pathAttributes.fill = "Solid"
+      testRectangle.pathAttributes.fillColor = "#00ff00"
 
       expect( fibExtractor.extract( testRectangle ))
         .toEqual({
@@ -173,7 +177,25 @@ describe( 'Fib Extract Object Tests!', function () {
           opacity: 1,
           width: 20,
           height: 30,
-          backgroundColor:'#ff0000',
+          backgroundColor:'#00ff00',
+          left: 40,
+          top: 50,
+          type: 'table'
+        })
+    })
+
+    it( 'should extract a rectangular clear table', function() {
+      testRectangle.name = 'id: testObject, type: table'
+      delete testRectangle.backgroundColor
+      delete testRectangle.pathAttributes.fill
+
+      expect( fibExtractor.extract( testRectangle ))
+        .toEqual({
+          id: 'testObject',
+          opacity: 1,
+          width: 20,
+          height: 30,
+          backgroundColor:'transparent',
           left: 40,
           top: 50,
           type: 'table'
