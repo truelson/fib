@@ -164,6 +164,26 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
+    it( 'should extract a graph', function() {
+      testRectangle.name = 'type: graph, id: funGraph, attributeName: oy'
+      expect( fibExtractor.extract( testRectangle ))
+        .toEqual({
+          id: 'funGraph',
+          attributeName: 'oy',
+          opacity: 1,
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'graph',
+          borderWidth: 1,
+          borderColor: '#00ff00',
+          borderRadius: 23,
+          backgroundColor: '#ff0000',
+          cornerRadius: 23
+        })
+    });
+
     it( 'should extract a rectangle told that it is a table', function() {
       testRectangle.name = 'id: testObject, type: table'
       delete testRectangle.backgroundColor
@@ -664,6 +684,24 @@ describe( 'Fib Extract Object Tests!', function () {
           borderRadius: 0
         })
     })
+
+    it( 'should extract a graph', function() {
+      testPath.name = 'type: graph, id: funGraph, attributeName: oy'
+      expect( fibExtractor.extract( testPath ))
+        .toEqual({
+          id: 'funGraph',
+          attributeName: 'oy',
+          opacity: 1,
+          width: 20,
+          height: 30,
+          left: 40,
+          top: 50,
+          type: 'graph',
+          borderWidth: 1,
+          borderColor: '#00ff00',
+          borderRadius: 0
+        })
+    });
 
     it( 'should extract a canvas view', function() {
       expect( fibExtractor.extract( testPath ))
