@@ -277,13 +277,13 @@ describe( 'Fib Extract Object Tests!', function () {
       })
     })
 
-    it( 'should extract a textfield with font and size', function() {
+    it( 'should extract a textField with font and size', function() {
       testRectangle.name =
-        'id: testObject, type: textfield, font: Museo, fontsize: 22'
+        'id: testObject, type: textField, font: Museo, fontsize: 22'
       expect( fibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         opacity: 1,
-        backgroundColor: 'transparent',
+        backgroundColor: '#ff0000',
         width: 20,
         height: 30,
         left: 40,
@@ -292,21 +292,29 @@ describe( 'Fib Extract Object Tests!', function () {
           fontFamily: 'Museo',
           fontSize: '22'
         },
-        type: 'textfield'
+        borderWidth: 1,
+        borderColor: '#00ff00',
+        borderRadius: 23,
+        cornerRadius: 23,
+        type: 'textField'
       })
     })
 
-    it( 'should extract a textarea', function() {
-      testRectangle.name = 'id: testObject, type: textarea'
+    it( 'should extract a textArea', function() {
+      testRectangle.name = 'id: testObject, type: textArea'
       expect( fibExtractor.extract( testRectangle )).toEqual({
         id: 'testObject',
         opacity: 1,
-        backgroundColor: 'transparent',
+        backgroundColor: '#ff0000',
         width: 20,
         height: 30,
         left: 40,
         top: 50,
-        type: 'textarea'
+        borderWidth: 1,
+        borderColor: '#00ff00',
+        borderRadius: 23,
+        cornerRadius: 23,
+        type: 'textArea'
       })
     })
 
@@ -539,8 +547,8 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
-    it( 'should extract text as a textfield', function() {
-      testText.name = 'type: textfield'
+    it( 'should extract text as a textField', function() {
+      testText.name = 'type: textField'
       expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
@@ -549,9 +557,8 @@ describe( 'Fib Extract Object Tests!', function () {
           height: 28,
           left: 41,
           top: 51,
-          type: 'textfield',
+          type: 'textField',
           color: '#ff0000',
-          backgroundColor: 'transparent',
           font: {
             fontFamily: '',
             fontSize: 0
@@ -561,8 +568,8 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
-    it( 'should extract text as a textfield with short font', function() {
-      testText.name = 'type: textfield'
+    it( 'should extract text as a textField with short font', function() {
+      testText.name = 'type: textField'
       testText.font = 'Gotham-Black'
       expect( fibExtractor.extract( testText ))
         .toEqual({
@@ -572,9 +579,8 @@ describe( 'Fib Extract Object Tests!', function () {
           height: 28,
           left: 41,
           top: 51,
-          type: 'textfield',
+          type: 'textField',
           color: '#ff0000',
-          backgroundColor: 'transparent',
           font: {
             fontFamily: 'GothamBlack',
             fontSize: 0
@@ -584,8 +590,8 @@ describe( 'Fib Extract Object Tests!', function () {
         })
     })
 
-    it( 'should extract text as a textarea', function() {
-      testText.name = 'type: textarea'
+    it( 'should extract text as a textArea', function() {
+      testText.name = 'type: textArea'
       expect( fibExtractor.extract( testText ))
         .toEqual({
           id: '__TestViewText1',
@@ -594,9 +600,8 @@ describe( 'Fib Extract Object Tests!', function () {
           height: 28,
           left: 41,
           top: 51,
-          type: 'textarea',
+          type: 'textArea',
           color: '#ff0000',
-          backgroundColor: 'transparent',
           font: {
             fontFamily: '',
             fontSize: 0
