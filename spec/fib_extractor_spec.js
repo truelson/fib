@@ -318,6 +318,25 @@ describe( 'Fib Extract Object Tests!', function () {
       })
     })
 
+    it( 'should extract a textView', function() {
+      testRectangle.name = 'id: testObject, type: textView'
+      expect( fibExtractor.extract( testRectangle )).toEqual({
+        id: 'testObject',
+        opacity: 1,
+        backgroundColor: '#ff0000',
+        width: 20,
+        height: 30,
+        left: 40,
+        top: 50,
+        borderWidth: 1,
+        borderColor: '#00ff00',
+        borderRadius: 23,
+        cornerRadius: 23,
+        type: 'textView'
+      })
+    })
+
+
     it( 'should extract a switch', function() {
       testRectangle.name = 'id: testObject, type: switch'
       expect( fibExtractor.extract( testRectangle )).toEqual({
