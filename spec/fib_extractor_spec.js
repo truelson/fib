@@ -578,6 +578,7 @@ describe( 'Fib Extract Object Tests!', function () {
           top: 51,
           type: 'textField',
           color: '#ff0000',
+          backgroundColor: 'transparent',
           font: {
             fontFamily: '',
             fontSize: 0
@@ -600,6 +601,7 @@ describe( 'Fib Extract Object Tests!', function () {
           top: 51,
           type: 'textField',
           color: '#ff0000',
+          backgroundColor: 'transparent',
           font: {
             fontFamily: 'GothamBlack',
             fontSize: 0
@@ -621,6 +623,7 @@ describe( 'Fib Extract Object Tests!', function () {
           top: 51,
           type: 'textArea',
           color: '#ff0000',
+          backgroundColor: 'transparent',
           font: {
             fontFamily: '',
             fontSize: 0
