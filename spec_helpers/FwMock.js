@@ -212,6 +212,8 @@ fw.createDocument = function() {
     scaleSelection: function() {},
     transformSelection: function() {},
 
+    moveFillVectorHandleBy: function( delta, name, constrain, justPoint ) {},
+
     selectAll: function() {},
 
     layers: [mockLayer],

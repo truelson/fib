@@ -121,6 +121,68 @@ describe('Fib Helper Tests!', function () {
       expect(fibHelper.objectType([])).toEqual('Array')
     })
 
+    describe('scalePathFill functions', function () {
+
+      var testGroup, testObj
+
+      beforeEach(function() {
+
+        testObj = new Group({
+          name: 'TestObj',
+          left: 0,
+          top: 0,
+          width: 34,
+          height: 34,
+          pixelRect: { top: 0, bottom: 34, left: 0, right: 34 },
+          pathAttributes: {
+                            fill: {},
+                            fillHandle1: { x: 3, y: 4 },
+                            fillHandle2: { x: 4, y: 5 },
+                            fillHandle3: { x: 10, y: 20 }
+                          }
+        })
+
+        testGroup = new Group({
+          name: 'TestGroup',
+          left: 0,
+          top: 0,
+          width: 34,
+          height: 34,
+          pixelRect: { top: 0, bottom: 34, left: 0, right: 34 },
+          elements: [ testObj ]
+        })
+
+      })
+
+      it('should change fill handle', function () {
+
+        spyOn(fibHelper.dom, 'moveFillVectorHandleBy')
+
+        fibHelper.scalePathFill( testObj, fibHelper.dom )
+
+        expect(fibHelper.dom.moveFillVectorHandleBy).toHaveBeenCalledWith(
+          { x: 3, y: 4 }, "start", false, false )
+        expect(fibHelper.dom.moveFillVectorHandleBy).toHaveBeenCalledWith(
+          { x: 1, y: 1 }, "end1", false, true )
+        expect(fibHelper.dom.moveFillVectorHandleBy).toHaveBeenCalledWith(
+          { x: 7, y: 16 }, "end2", false, true )
+      })
+
+      it('should change fill handle on children of group', function () {
+
+        spyOn(fibHelper.dom, 'moveFillVectorHandleBy')
+
+        fibHelper.scaleAllPathFill( testGroup, fibHelper.dom )
+
+        expect(fibHelper.dom.moveFillVectorHandleBy).toHaveBeenCalledWith(
+          { x: 3, y: 4 }, "start", false, false )
+        expect(fibHelper.dom.moveFillVectorHandleBy).toHaveBeenCalledWith(
+          { x: 1, y: 1 }, "end1", false, true )
+        expect(fibHelper.dom.moveFillVectorHandleBy).toHaveBeenCalledWith(
+          { x: 7, y: 16 }, "end2", false, true )
+      })
+    })
+
     describe('ExportPNG function', function () {
       var img
 
