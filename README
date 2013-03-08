@@ -1,3 +1,6 @@
 Fib is a Fireworks plugin that exports Fireworks Pages into MassiveHealth's
-JSON page description.
+JSON page description as well as associated images. It is a means of
+platform independent view descriptions for mobile devices
+
+
 
