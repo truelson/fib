@@ -5,13 +5,13 @@ FIB_ALL_PATH=`pwd`/fib_all.jsf
 FIB_HELP_PATH=`pwd`/fib_helper.js
 LIB_PATH=`pwd`/lib
 
-rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib.jsf
-ln -s $FIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
+rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/fib.jsf
+ln -s $FIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/
 
-rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib_all.jsf
-ln -s $FIB_ALL_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
+rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/fib_all.jsf
+ln -s $FIB_ALL_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/
 
-rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/fib_helper.js
+rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/fib_helper.js
 
-rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/lib
-ln -s $LIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS5/Commands/
+rm -rf ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/lib
+ln -s $LIB_PATH ~/Library/Application\ Support/Adobe/Fireworks\ CS6/Commands/
