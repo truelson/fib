@@ -1,6 +1,30 @@
-Fib is a Fireworks plugin that exports Fireworks Pages into MassiveHealth's
+Fib is a Fireworks plugin that exports Fireworks Pages into a
 JSON page description as well as associated images. It is a means of
-platform independent view descriptions for mobile devices
+creating platform independent view descriptions for mobile devices.
 
+The main reason for fib is to streamline app development by having
+a true vector graphics program handle view creation and not require
+any importing of assets into Interface Builder (or use Interface Builder
+at all).
 
+My iOS support for fib exported views will likely come in the form 
+of a CocoaPod. I just need to break my code out into a pod.
 
+Fib likely only works as a plugin for fireworks on OS X. 
+It has not been used once on Windows, so beware.
+
+You install fib by running the install bash script in this directory.
+Presently you have to choose which directory fib will export to when
+running the fib command in Fireworks, and that chosen directory must 
+contain a "views" and "images" folder. I will need to make that easier.
+
+Also in the bin directory is a bash script, fib_all, that I have Xcode
+call each time it builds my project. This checks your art directory
+to see if any fireworks source files have changed, then tells Fireworks
+to export the files again if there has been a change. This way, I never
+have to export manually from Fireworks. This will need some love to make
+using this easier.
+
+Massive thanks to Massive Health for saying I could open source this in 2012.
+
+Thanks again!
