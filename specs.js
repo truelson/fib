@@ -35,8 +35,11 @@ process.argv.forEach(function(arg){
   }
 });
 
-// Have to hack the directory here. not sure why.
-jasmine.executeSpecsInFolder(__dirname + '/spec', function(runner, log){
+var options = {}
+options.specFolder = __dirname + '/spec'
+options.isVerbose = isVerbose
+options.showColors = showColors
+options.onComplete = function(runner, log){
   var exit = function() {
     process.exit( runner.results().failedCount );
   };
@@ -46,6 +49,7 @@ jasmine.executeSpecsInFolder(__dirname + '/spec', function(runner, log){
   } else {
     exit();
   }
+}
 
-}, isVerbose, showColors);
+jasmine.executeSpecsInFolder(options)
 
